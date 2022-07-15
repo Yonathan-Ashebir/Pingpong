@@ -10,6 +10,7 @@ import "../css/linear-range-selector.css"
  ** inside - whether to display navigation arrows inside the option being displayed
  */
 export function LinearRangeSelector(props) {
+     
      let [index, setIndex] = useState(typeof props.initial === "number" ? props.initial : 0)
      let [direction, setDirection] = useState("right");
      let next = () => { setDirection("right"); if (index < props.values.length - 1) requestAnimationFrame(()=>setIndex(index + 1)) }
@@ -20,7 +21,7 @@ export function LinearRangeSelector(props) {
                <div className="optionsDisplay">
                     <SwitchTransition mode="out-in">
                          <CSSTransition key={index} classNames={"move-" + direction + (props.inside ? " inside" : "")} addEndListener={(node, call) =>node.addEventListener('transitionend', (ev)=>{if(ev.propertyName==="transform")call()}, false)}>
-                              <div className="option" onClick={props.onSelect}>
+                              <div className="option" onClick={((ev)=>props.onSelect(ev,index)).bind(this)}>
                                    <Button >
                                         {props.values[index]}
                                    </Button>

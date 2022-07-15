@@ -1,9 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
 import { Vector } from "y-lib/LayoutBasics";
+
+//todo
+
 //runtime constants
 export const DEFAULT_RACKET_LENGTH = 75.6, DEFAULT_RACKET_THICKNESS = 30.2, DEFAULT_BALL_RADIUS = 15.1, DEFAULT_BALL_TRANSFORM = "translate(-50%,-50%) ",
-    DEFAUlT_GAME_STARTED_MESSAGE = <span style={{ color: "darkgreen", fontWeight: 700, fontFamily: "cursive", fontSize: "12vw" }}>GO!</span>;
+    DEFAUlT_GAME_STARTED_MESSAGE = <span style={{ color: "darkgreen", fontWeight: 700, fontFamily: "cursive", fontSize: "20vw" }}>GO!</span>;
 
 export const gameTypes = { SCORE: 0, LEAD_BY: 1, TIME_OUT: 2 }
 export const Player = React.createContext(null)
@@ -76,23 +79,64 @@ export function getAllowedTargetLeads() {
     return [2, 3, 4, 5]
 }
 export function getAllowedTargetScores() {
-    return Array(10).filter((val) => val >= 3)
+    return [...Array(10).keys()].filter((val) => val >= 3)
 }
-export function getAllowedGameDurationsSeconds(){
-    return Array(6).map((val)=>20*(val+1))
+export function getAllowedGameDurationsSeconds() {
+    return [...Array(6).keys()].map((val) => 20 * (val + 1))
+}
+export function getTarget() {
+    switch (getGameType()) {
+        case gameTypes.SCORE: {
+            return getTargetScore()
+        }
+        case gameTypes.LEAD_BY: {
+            return getTargetLead()
+        }
+        case gameTypes.TIME_OUT: {
+            return getGameDurationSeconds()
+        }
+    }
+}
+
+export function getAllowed() {
+    switch (getGameType()) {
+        case gameTypes.SCORE: {
+            return getAllowedTargetScores()
+        }
+        case gameTypes.LEAD_BY: {
+            return getAllowedTargetLeads()
+        }
+        case gameTypes.TIME_OUT: {
+            return getAllowedGameDurationsSeconds()
+        }
+    }
 }
 //preference setters 
 export function setGameType(type) {
-   
+  console.log("game type set: "+type)
 }
 export function setDifficulty(level) {
+    console.log("difficulty set: "+level)
 
+}
+export function setTarget(target) {
+  switch (getGameType()) {
+        case gameTypes.SCORE: {
+            return setTargetScore(target)
+        }
+        case gameTypes.LEAD_BY: {
+            return setTargetLead(target)
+        }
+        case gameTypes.TIME_OUT: {
+            return setGameDurationSeconds(target)
+        }
+    }
 }
 export function contact() {
-
+ console.log("contact requested")
 }
-export function setTotalDurationSeconds() {
-
+export function setGameDurationSeconds(duration) {
+    console.log("game duration set: "+duration)
 }
-export function setTargetScore() { }
-export function setTargetLead() { }
+export function setTargetScore(score) { console.log("target score set: "+score)}
+export function setTargetLead(lead) {console.log("target lead set: "+lead) }

@@ -7,6 +7,7 @@ import { } from "redux";
 import toPX from "to-px";
 import { Vector } from "y-lib/LayoutBasics";
 import { DEFAULT_BALL_RADIUS, DEFAULT_BALL_TRANSFORM, getInitialVelocity, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
+import { gameStates } from "../management/game";
 //Kept as simple as possible for render issues
 class Ball extends React.Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class Ball extends React.Component {
     }
     componentDidUpdate() {
         switch (this.props.store?.status) {
-            case "starting": {
+            case gameStates.roundStarting: {
                 this.resetPosition();
                 let v = getInitialVelocity()
                 v = new Vector(v.getR())
@@ -32,13 +33,13 @@ class Ball extends React.Component {
                 v.rotate(rad + Math.sign(rad) * (0.6))
                 this.setVelocity(v)
                 this.move(); break
-            } case "pausing": {
+            } case gameStates.pausing: {
                 this.stop(); break
-            } case "resuming": {
+            } case gameStates.resuming: {
                 this.state.lastTimePositioned = new Date().getTime() + 10;//todo: correction
                 this.move(); break
             }
-            case "finished": {
+            case gameStates.finished: {
                 this.stop();
                 break;
             }

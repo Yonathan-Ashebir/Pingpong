@@ -57,6 +57,7 @@ body {
     margin: 0px;
     width: 100%;
     height: 100%;
+    background-image: linear-gradient(180deg, red 30%, blue 70%);
 }
 
 #ball {
@@ -66,7 +67,8 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    background-color: green;
+    background-color: rgba(255, 255, 255, 0.133);
+    backdrop-filter: hue-rotate(124deg);
     transition: top 10ms, left 10ms;
 }
 

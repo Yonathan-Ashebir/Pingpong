@@ -12,6 +12,7 @@ import { WinnerDialog } from "../Elements/winnerDialog";
 import {Navigate} from "react-router"
 import { DEFAUlT_GAME_STARTED_MESSAGE, gameTypes, getAppreciationMessage, getInitialVelocity, getMaximumVelocity, getTargetLead, getTargetScore, getGameDurationSeconds, getVelocityRefreshTimeSeconds, mapDispatchToProp, mapStoreToProp, untrackedGameData, getMaximumDurationSeconds } from "./data";
 
+export const gameStates={launched:0,gameStarting:1,roundStarting:2,roundStarted:3,pausing:4,paused:5,resuming:6,finished:7}
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,7 @@ class Game extends React.Component {
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
         if(status==="exiting")return (<Navigate to="/"></Navigate>)
         let scoreDisplay, buttons;
-        if (status === "finished") {
+        if (status === gameStates.finished) {
             let countDoneStyle = {
                 animation: "small-counter-anim 800ms ease-out 10ms",
             }
@@ -45,11 +46,11 @@ class Game extends React.Component {
             <>
                 <Ground gameType={this.props.gameType} />
                 <Controls gameType={this.props.gameType} />
-                <FullScreenDialog show={status === "launched" || status === "finished"} transitionInDuration={60} transitionOutDuration={400}>
-                    {(status === "launched") ? (
+                <FullScreenDialog show={status === gameStates.launched || status === gameStates.finished} transitionInDuration={60} transitionOutDuration={400}>
+                    {(status === gameStates.launched) ? (
                         <BigCounter from={3} to={0} message={DEFAUlT_GAME_STARTED_MESSAGE} onComplete={this.startGame} timePerDigit={800}></BigCounter>
                     ) : null}
-                    {(status === "finished") ? (
+                    {(status === gameStates.finished) ? (
                         <WinnerDialog winner={
 
                             (score.red === score.blue) ? (<span style={{ color: "green" }} className="winner-name">{"A TIE"}</span>) : (<span style={{ color: (score.red > score.blue) ? "red" : "blue" }} className="winner-name">{(winnerName) ? winnerName : "winner name"}</span>)
@@ -64,45 +65,45 @@ class Game extends React.Component {
     componentDidMount() {
         this.trackGroundSize();
         document.body.onresize = this.trackGroundSize;
-        this.props.dispatch({ type: "share", payload: { status: "launched" } })
+        this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
     }
     componentDidUpdate() {
 
     }
     gameFinished = () => {
         let { score } = this.props.store
-        this.props.dispatch({ type: "share", payload: { status: "finished", winnerName: (score.red > score.blue) ? "RED" : "BLUE" } });
+        this.props.dispatch({ type: "share", payload: { status: gameStates.finished, winnerName: (score.red > score.blue) ? "RED" : "BLUE" } });
     }
 
     startNewGame = () => {
-        if (this.props.store.status === "paused" || this.props.store.status === "finished")
-        this.props.dispatch({ type: "share", payload: { status: "launched" } })
+        if (this.props.store.status === gameStates.paused || this.props.store.status === gameStates.finished)
+        this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
     }
     startGame = () => {
-        if (!(this.props.store.status === "launched" || this.props.store.status === "paused" || this.props.store.status === "finished")) return;
+        if (!(this.props.store.status === gameStates.launched || this.props.store.status === gameStates.paused || this.props.store.status === gameStates.finished)) return;
         let target = (this.props.gameType === gameTypes.SCORE) ? getTargetScore() : (this.props.gameType === gameTypes.LEAD_BY) ? getTargetLead() : null;
-        this.props.dispatch({ type: "share", payload: { gameStartTime: new Date().getTime(), score: { blue: 0, red: 0, target: target }, gameTotalDurationSeconds: (this.props.gameType === gameTypes.TIME_OUT) ? getGameDurationSeconds() : getMaximumDurationSeconds() } });
+        this.props.dispatch({ type: "share", payload: {status:gameStates.gameStarting, gameStartTime: new Date().getTime(), score: { blue: 0, red: 0, target: target }, gameTotalDurationSeconds: (this.props.gameType === gameTypes.TIME_OUT) ? getGameDurationSeconds() : getMaximumDurationSeconds() } });
         this.startRound();
         setTimeout(this.monitor, 100);
     }
 
     pauseGame = () => {
-        if (!(this.props.store.status === "playing")) return;
+        if (!(this.props.store.status === gameStates.roundStarted)) return;
         let currentTime = new Date().getTime()
         let gameTime = currentTime - this.props.store.gameStartTime;
-        let roundTime = currentTime - this.props.roundTime;
-        this.props.dispatch({ type: "share", payload: { gameTime: gameTime, roundTime: roundTime, status: "pausing", gameStartTime: undefined, roundStartTime: undefined } })
-        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: "paused" } }), 10)
+        let roundTime = currentTime - this.props.store.roundStartTime;
+        this.props.dispatch({ type: "share", payload: { gameTime: gameTime, roundTime: roundTime, status: gameStates.pausing, gameStartTime: undefined, roundStartTime: undefined } })
+        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.paused } }), 10)
     }
 
     resumeGame = () => {
-        if (!(this.props.store.status === "paused")) return;
+        if (!(this.props.store.status === gameStates.paused)) return;
         let currentTime = new Date().getTime()
         let gameStartTime = currentTime - this.props.store.gameTime;
         let roundStartTime = currentTime - this.props.store.roundTime;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();;
-        this.props.dispatch({ type: "share", payload: { gameStartTime: gameStartTime, roundStartTime: roundStartTime, gameTime: undefined, roundTime: undefined, status: "resuming" } })
-        setTimeout(() => { this.props.dispatch({ type: "share", payload: { gameTimeBeforePause: null, status: "playing" } }); this.monitor(); }, 10);
+        this.props.dispatch({ type: "share", payload: { gameStartTime: gameStartTime, roundStartTime: roundStartTime, gameTime: undefined, roundTime: undefined, status: gameStates.resuming } })
+        setTimeout(() => { this.props.dispatch({ type: "share", payload: { gameTimeBeforePause: null, status: gameStates.roundStarted } });  setTimeout(this.monitor, 100)}, 10);
 
     }
 
@@ -117,10 +118,10 @@ class Game extends React.Component {
     }
 
     startRound = () => {//todo: some kind of loaded check
-        if (!(this.props.store.status === "playing" || this.props.store.status === "launched"|| this.props.store.status === "paused" || this.props.store.status === "finished")) return;
+        if (!(this.props.store.status === gameStates.roundStarted || this.props.store.status === gameStates.launched )) return;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();
-        this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: "starting" } });
-        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: "playing" } }), 10);//todo: another buggy react issue
+        this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status:gameStates.roundStarting} });
+        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.roundStarted } }), 10);//todo: another buggy react issue
     }
     restartRound = () => {
         let { ball } = untrackedGameData;
@@ -130,7 +131,7 @@ class Game extends React.Component {
     }
 
     monitor = () => {
-        if (!(this.props.store.status === "playing")) return;
+        if (!(this.props.store.status === gameStates.roundStarted)) return;
         clearTimeout(this.state.monitorId)
         console.log("monitoring")
         let { score, gameStartTime, gameTotalDurationSeconds, roundStartTime } = this.props.store;
@@ -139,6 +140,7 @@ class Game extends React.Component {
         }
 
         let currentMonitorTimeSeconds = Math.round((new Date().getTime() - roundStartTime) / 1000);
+        console.log("current time seconds: ",currentMonitorTimeSeconds)
         let progress;
         let refreshTime = getVelocityRefreshTimeSeconds();
         if (this.props.gameType === gameTypes.SCORE) {
@@ -160,8 +162,8 @@ class Game extends React.Component {
             this.state.lastMonitorTimeSeconds = currentMonitorTimeSeconds;
             let maxV = getMaximumVelocity(); let initV = getInitialVelocity();
             let vRange = maxV.getR() - initV.getR();
-            let maxVR = initV.getR() + (0.4 + 0.4 * progress + 0.2 * Math.random()) * vRange;
-            let vR = (currentMonitorTimeSeconds ** 2 / 60 ** 2) * (maxVR - initV.getR()) + initV.getR();
+            let maxVR = initV.getR() + (0.6 + 0.2 * progress + 0.2 * Math.random()) * vRange;
+            let vR = (currentMonitorTimeSeconds ** 1.2 / 60 ** 1.2) * (maxVR - initV.getR()) + initV.getR();
             console.log("vR: ", vR, "maxVR:", maxV.getR())
             untrackedGameData.ball.getVelocity().setR(vR)
 
@@ -185,10 +187,10 @@ class Game extends React.Component {
 }
 function Buttons(props) {
     let { game } = untrackedGameData
-    let btns = []
+    let buttons = []
     for (let key in game) {
         if (typeof game[key] === "function") {
-            btns.push(<button key={key} onClick={game[key]}>
+            buttons.push(<button key={key} onClick={game[key]}>
                 {key}
             </button>)
         }
@@ -196,7 +198,7 @@ function Buttons(props) {
 
     return (
         <div style={{ position: "absolute", bottom: "2px" }}>
-            {btns}
+            {buttons}
         </div>
     )
 }

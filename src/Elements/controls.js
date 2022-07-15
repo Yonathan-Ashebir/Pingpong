@@ -4,6 +4,7 @@ import React from "react";
 import { connect } from "react-redux"
 import { gameTypes, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
 import $ from "jquery"
+import { gameStates } from "../management/game";
 class Controls extends React.Component {
     constructor(props) {
         super(props)
@@ -42,19 +43,19 @@ class Controls extends React.Component {
         );
     }
     componentDidUpdate() {
-        if (this.props.store?.status === "starting") {
+        if (this.props.store?.status === gameStates.roundStarting) {
             this._showAndHide();
         }
-        if (this.props.store?.status === "resuming") {
+        if (this.props.store?.status === gameStates.resuming) {
             this._hide();
         }
-        if (this.props.store?.status === "pausing") {
+        if (this.props.store?.status === gameStates.pausing) {
             this._show();
         }
     }
 
     toggle = () => {
-        if (this.props.store?.status === "playing") {
+        if (this.props.store?.status === gameStates.roundStarted) {
             this._toggle()
         }
     }
@@ -66,11 +67,11 @@ class Controls extends React.Component {
     }
 
     show = () => {
-        if (this.props.store?.status === "playing") this._show();
+        if (this.props.store?.status === gameStates.roundStarted) this._show();
     }
 
     hide = () => {
-        if (this.props.store?.status === "playing") this._hide();
+        if (this.props.store?.status === gameStates.roundStarted) this._hide();
     }
 
 
@@ -96,7 +97,7 @@ class _GameTimer extends React.Component {
         this.state = { time: 0, timerClassName: "visible", pauseClassName: "" }
     }
     render() {
-        if (!this.props.store || !this.props.store.gameStartTime || this.props.store.status === "launched") return (<p className="game-timer">{this.state.time}</p>);
+        if (!this.props.store || !this.props.store.gameStartTime || this.props.store.status === gameStates.launched||this.props.store.status===gameStates.gameStarting) return (<p className="game-timer">{this.state.time}</p>);
         let { gameStartTime, status, gameTotalDurationSeconds } = this.props.store
         this.state.time = Math.round((new Date().getTime() - gameStartTime) / 1000)
         if (Math.floor(this.state.time / 3) % 2 == 0 || (this.props.gameType === gameTypes.TIME_OUT && gameTotalDurationSeconds - this.state.time < 10)) {
@@ -106,7 +107,7 @@ class _GameTimer extends React.Component {
             this.state.timeClassName = ""
             this.state.pauseClassName = "visible"
         }
-        if (status === "playing") {
+        if (status === gameStates.roundStarted) {
             let refresh = (() => this.forceUpdate()).bind(this)
             setTimeout(refresh, 1000)
         }
@@ -114,7 +115,7 @@ class _GameTimer extends React.Component {
         if (this.state.time < 0) this.state.time = 0;
         return (
             <Button variant="text" color="info" onClick={untrackedGameData.game.pauseGame} id="game-timer-container">
-                <span id="game-timer" style={{ position: "relative", height: "fit-content" }} className={(status === "playing") ? "active" : ""}>
+                <span id="game-timer" style={{ position: "relative", height: "fit-content" }} className={status === gameStates.roundStarted ? "active" : ""}>
                     <span className={this.state.timeClassName} style={{ fontSize: "6mm" }}>{this.state.time}</span>
                     <span className={this.state.pauseClassName + " centered material-icons"} style={{ fontSize: "12mm" }}>pause_circle</span>
                 </span>

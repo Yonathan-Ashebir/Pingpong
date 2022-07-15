@@ -9,7 +9,7 @@ export class PlayerField extends React.Component {
         this.state = { freedom: 0 }
     }
     render() {
-        let style = { backgroundColor: (this.props.position === "top") ? "red" : "blue", flexDirection: (this.props.position === "top") ? "column" : "column-reverse" }
+        let style = {  flexDirection: (this.props.position === "top") ? "column" : "column-reverse" }
         let rangeStyle = { height: (this.context.racketThickness) ? this.context.racketThickness : DEFAULT_RACKET_THICKNESS/toPX("mm")+ this.state.freedom + "mm" }
         return (
             <div style={style}

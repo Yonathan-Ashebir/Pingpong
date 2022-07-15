@@ -11,18 +11,17 @@ import Game from './management/game';
 
 function App() {
   return (
-    // <BrowserRouter>
-    //   <Routes>
-    //     <Route index element={<Home />}></Route>
-    //     <Route path='/game' element={
-    //       <Provider store={getStore()} >
-    //         <Game gameType={getGameType()} />
-    //       </Provider>
-    //     }>
-    //     </Route>
-    //   </Routes>
-    // </BrowserRouter>
-    <LinearRangeSelector values={[1,2,3,4,5]} initial={1}></LinearRangeSelector>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<Home />}></Route>
+        <Route path='/game' element={
+          <Provider store={getStore()} >
+            <Game gameType={getGameType()} />
+          </Provider>
+        }>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

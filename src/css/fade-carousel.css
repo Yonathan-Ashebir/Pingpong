@@ -1,0 +1,12 @@
+.fade-carousel-enter, .fade-carousel-appear, .fade-carousel-exit-active {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.fade-carousel-appear-active, .fade-carousel-enter-active, .fade-carousel-exit:not(.fade-carousel-exit-active) {
+    opacity: 1;
+    transform: scale(1);
+}
+.fade-carousel-appear,.fade-carousel-enter,.fade-carousel-exit{
+    transition:all 500ms;
+}

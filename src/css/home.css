@@ -1,6 +1,7 @@
 @font-face {
     font-family: Graduate;
     src: url(../fonts/Graduate-Regular.ttf);
+
 }
 
 #home {
@@ -8,26 +9,27 @@
     flex-flow: column nowrap;
     height: 100%;
     width: 100%;
+    background-image: linear-gradient(122deg, #ff000077, #0000ff77);
 }
 
 #home>#main {
     flex-flow: column nowrap;
     align-self: center;
     justify-self: center;
-    margin-top:10vh
+    margin-top: 10vh
 }
 
 #home #logo {
     max-height: 30vh;
-    background-color: red;
     height: 3cm;
     width: 3cm;
-    /* todo */
 }
 
 #home>#main>#phrase {
     max-height: 3em;
     font-family: Graduate;
+    font-weight: 700;
+    letter-spacing: 0.7em;
 }
 
 #home>#main>#prefs {
@@ -43,7 +45,9 @@
     padding: 2mm 2mm 0mm 2mm;
     justify-content: center;
     width: 80vw;
+    /* backdrop-filter: hue-rotate(325deg); */
     align-items: center;
+    /* background-color: #ffffff11; */
 }
 
 #game-type-selector {
@@ -70,9 +74,12 @@
     padding: 0mm 2mm;
     box-sizing: border-box;
     color: gray;
-    width:100%;
+    width: 100%;
 }
 
+#game-type-selector+div {
+    width: 100%;
+}
 
 
 .game-detail-title {
@@ -87,13 +94,22 @@
 }
 
 .game-detail-content {
-    font-size: 0.7em;
+    font-size: 0.8em;
     font-family: emoji;
     padding-top: 2mm;
     padding-bottom: 2mm;
-    color:gray;
+
     letter-spacing: 0.1ex;
-    width:100%
+    width: 100%;
+}
+
+.count-selector {
+    display: inline-block;
+    background-color: #dddddd77;
+    box-shadow: #44444477 0px 1px 2px;
+    border-radius: 2px;
+    padding: 2px 4px;
+    margin: 0px 2px;
 }
 
 div#difficulty-card {
@@ -105,6 +121,10 @@ div#difficulty-card {
     display: flex;
     align-items: center;
     justify-content: space-around;
+    /* backdrop-filter: hue-rotate(325deg); */
+    /* background-color: #000000; */
+    ;
+    /* background-color: #00000000; */
 }
 
 span#difficulty-label {
@@ -120,29 +140,29 @@ span#difficulty-label {
     margin-right: 4mm;
 }
 
-#bottom-bar{
-     position: fixed;
-     bottom:0;
-     left: 0;
-    height:calc( 0.8cm + 2vh);
+#bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: calc(0.8cm + 2vh);
     background-color: #f8f8ff77;
-    width:100vw;
+    width: 100vw;
     align-items: center;
     justify-content: space-between;
 }
 
-#version{
+#version {
     font-size: 3.5mm;
-    color: grey; 
-    padding-left: 5mm;  
-     
+    color: grey;
+    padding-left: 5mm;
+
 }
 
-#contact{
+#contact {
     font-size: 3.5mm;
-    color: grey;   
-    padding-right: 5mm; 
-    height: 100%; 
+    color: grey;
+    padding-right: 5mm;
+    height: 100%;
 }
 
 
@@ -185,4 +205,25 @@ span#difficulty-label {
 .details-exit-active {
     opacity: 0;
     max-height: 0;
+}
+
+
+.contact-list>.contact-option {
+    padding: 3mm;
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
+
+.contact-list>.contact-option>a {
+    display: inherit;
+    justify-content: space-between;
+}
+
+
+
+ul.contact-list {
+    list-style: none;
+    padding: 1mm;
+    margin: 0;
 }

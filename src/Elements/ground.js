@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import "../css/game.css";
 import { mapDispatchToProp, mapStoreToProp, Player, untrackedGameData } from "../management/data";
+import { gameStates } from "../management/game";
 import Ball from "./ball";
 import FullScreenDialog from "./fullScreenDialog";
 import { PlayerField } from "./playerField";
@@ -23,7 +24,7 @@ class Ground extends React.Component {
                     <PlayerField position={"bottom"} />
                 </Player.Provider>
                 <Ball></Ball>
-                <FullScreenDialog transitionDuration={400} show={(status === "pausing" || status === "paused")}>
+                <FullScreenDialog transitionDuration={400} show={(status === gameStates.pausing|| status === gameStates.paused)}>
                     <Suspend />
                 </FullScreenDialog>
             </div>)

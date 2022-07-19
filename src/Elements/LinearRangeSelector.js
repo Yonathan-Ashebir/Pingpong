@@ -1,7 +1,7 @@
 import { Button, IconButton } from "@mui/material";
 import { useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import "../css/linear-range-selector.css"
+import "../css/linear-range-selector.css";
 
 /**valid props:
  ** initial - the initial index otherwise zero would be used

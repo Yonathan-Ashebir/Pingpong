@@ -1,5 +1,5 @@
-import anime from "animejs"
-import "../css/winner-dialog.css"
+import anime from "animejs";
+import "../css/winner-dialog.css";
 export function WinnerDialog(props) {
     let context = {}
     let dialog = (

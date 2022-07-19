@@ -1,5 +1,5 @@
 import anime from "animejs";
-import "../css/TwoFactionsBar.css"
+import "../css/TwoFactionsBar.css";
 
 export default function TwoFactionsBar(props) {
     let colorOne = props.colorOne ? props.colorOne : "red"

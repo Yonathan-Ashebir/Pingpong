@@ -1,9 +1,8 @@
-import { Button, CircularProgress, LinearProgress } from "@mui/material";
-import { extend } from "jquery";
+import { Button, CircularProgress } from "@mui/material";
+import $ from "jquery";
 import React from "react";
-import { connect } from "react-redux"
+import { connect } from "react-redux";
 import { gameTypes, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
-import $ from "jquery"
 import { gameStates } from "../management/game";
 class Controls extends React.Component {
     constructor(props) {

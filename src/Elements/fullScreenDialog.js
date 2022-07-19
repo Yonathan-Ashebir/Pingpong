@@ -1,6 +1,6 @@
-import React, { useTransition } from "react";
+import React from "react";
 import { Transition } from "react-transition-group";
-import "../css/fullscreen-dialog.css"
+import "../css/fullscreen-dialog.css";
 export default function FullScreenDialog(props) {
     let duration = (props.transitionDuration) ? props.transitionDuration : 400;
     if (props.show && props.transitionInDuration) duration = props.transitionInDuration;

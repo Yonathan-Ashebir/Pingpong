@@ -1,8 +1,7 @@
-import { Button } from "@mui/material";
-import proptypes from "proptypes"
+import proptypes from "proptypes";
 import { useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import "../css/fade-carousel.css"
+import "../css/fade-carousel.css";
 /**valid props:
  ** interval - per display
  ** children - children

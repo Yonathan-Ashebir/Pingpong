@@ -1,9 +1,8 @@
 import { Provider } from "react-redux";
-import { Routes, Route } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { BrowserRouter } from "react-router-dom";
 import './App.css';
 import { Home } from './Elements/home';
-import { LinearRangeSelector } from "./Elements/LinearRangeSelector";
 import "./fonts/material-icons.css";
 import { getGameType, getStore } from './management/data';
 import Game from './management/game';

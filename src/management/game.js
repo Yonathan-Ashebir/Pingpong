@@ -1,18 +1,16 @@
 import { Button, Stack } from "@mui/material";
-import { red } from "@mui/material/colors";
 import React from "react";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { Navigate } from "react-router";
 import Controls from "../Elements/controls";
 import { BigCounter, SmallCounter } from "../Elements/counters";
 import FullScreenDialog from "../Elements/fullScreenDialog";
 import Ground from "../Elements/ground";
-import Suspend from "../Elements/suspendDialog";
 import TwoFactionsBar from "../Elements/twoFactionsBar";
 import { WinnerDialog } from "../Elements/winnerDialog";
-import {Navigate} from "react-router"
-import { DEFAUlT_GAME_STARTED_MESSAGE, gameTypes, getAppreciationMessage, getInitialVelocity, getMaximumVelocity, getTargetLead, getTargetScore, getGameDurationSeconds, getVelocityRefreshTimeSeconds, mapDispatchToProp, mapStoreToProp, untrackedGameData, getMaximumDurationSeconds } from "./data";
+import { DEFAUlT_GAME_STARTED_MESSAGE, gameTypes, getAppreciationMessage, getGameDurationSeconds, getInitialVelocity, getMaximumDurationSeconds, getMaximumVelocity, getTargetLead, getTargetScore, getVelocityRefreshTimeSeconds, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "./data";
 
-export const gameStates={launched:0,gameStarting:1,roundStarting:2,roundStarted:3,pausing:4,paused:5,resuming:6,finished:7}
+export const gameStates = { launched: 0, gameStarting: 1, roundStarting: 2, roundStarted: 3, pausing: 4, paused: 5, resuming: 6, finished: 7 }
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -21,9 +19,10 @@ class Game extends React.Component {
     }
 
     render() {
+        console.log("at game render method: ", this.props.store?.status)
         // setTimeout(() => { window.mStore = this.props.store; window.untracked = untrackedGameData }, 100) //todo
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
-        if(status==="exiting")return (<Navigate to="/"></Navigate>)
+        if (status === "exiting") return (<Navigate to="/"></Navigate>)
         let scoreDisplay, buttons;
         if (status === gameStates.finished) {
             let countDoneStyle = {
@@ -37,9 +36,9 @@ class Game extends React.Component {
                 </div>
             )
             buttons = <Stack orientation="horizontal" spacing={2} >
-                  <Button style={{ marginTop: "10mm" }} variant="contained" color="primary" onClick={this.startNewGame}><span className="material-icons">replay</span>&nbsp;Restart</Button>
+                <Button style={{ marginTop: "10mm" }} variant="contained" color="primary" onClick={this.startNewGame}><span className="material-icons">replay</span>&nbsp;Restart</Button>
                 <Button style={{ marginTop: "10mm" }} variant="contained" color="warning" onClick={this.exitGame}><span className="material-icons">close</span>&nbsp;Exit</Button>
-                </Stack>
+            </Stack>
         }
 
         return (
@@ -68,7 +67,7 @@ class Game extends React.Component {
         this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
     }
     componentDidUpdate() {
-
+        if(this.props.store?.status===gameStates.gameStarting)this.startRound();
     }
     gameFinished = () => {
         let { score } = this.props.store
@@ -77,13 +76,13 @@ class Game extends React.Component {
 
     startNewGame = () => {
         if (this.props.store.status === gameStates.paused || this.props.store.status === gameStates.finished)
-        this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
+            this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
     }
     startGame = () => {
-        if (!(this.props.store.status === gameStates.launched || this.props.store.status === gameStates.paused || this.props.store.status === gameStates.finished)) return;
+        if (!(this.props.store.status === gameStates.launched)) return;
         let target = (this.props.gameType === gameTypes.SCORE) ? getTargetScore() : (this.props.gameType === gameTypes.LEAD_BY) ? getTargetLead() : null;
-        this.props.dispatch({ type: "share", payload: {status:gameStates.gameStarting, gameStartTime: new Date().getTime(), score: { blue: 0, red: 0, target: target }, gameTotalDurationSeconds: (this.props.gameType === gameTypes.TIME_OUT) ? getGameDurationSeconds() : getMaximumDurationSeconds() } });
-        this.startRound();
+        this.props.dispatch({ type: "share", payload: { status: gameStates.gameStarting, gameStartTime: new Date().getTime(), score: { blue: 0, red: 0, target: target }, gameTotalDurationSeconds: (this.props.gameType === gameTypes.TIME_OUT) ? getGameDurationSeconds() : getMaximumDurationSeconds() } });
+        console.log(this.props.store.status)
         setTimeout(this.monitor, 100);
     }
 
@@ -103,13 +102,13 @@ class Game extends React.Component {
         let roundStartTime = currentTime - this.props.store.roundTime;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();;
         this.props.dispatch({ type: "share", payload: { gameStartTime: gameStartTime, roundStartTime: roundStartTime, gameTime: undefined, roundTime: undefined, status: gameStates.resuming } })
-        setTimeout(() => { this.props.dispatch({ type: "share", payload: { gameTimeBeforePause: null, status: gameStates.roundStarted } });  setTimeout(this.monitor, 100)}, 10);
+        setTimeout(() => { this.props.dispatch({ type: "share", payload: { gameTimeBeforePause: null, status: gameStates.roundStarted } }); setTimeout(this.monitor, 100) }, 10);
 
     }
 
     exitGame = () => {
         this.props.dispatch({ type: "share", payload: { status: "exiting" } })
-     }
+    }
 
     updateScoreAndRestart = (score) => {
         this.props.dispatch({ type: "share", payload: { score: { red: Math.round(score.red), blue: Math.round(score.blue), target: this.props.store.score.target } } });
@@ -117,13 +116,16 @@ class Game extends React.Component {
         this.restartRound();
     }
 
-    startRound = () => {//todo: some kind of loaded check
-        if (!(this.props.store.status === gameStates.roundStarted || this.props.store.status === gameStates.launched )) return;
+    startRound = () => {
+        console.log("status at startRund", this.props.store.status)
+        if (!(this.props.store.status === gameStates.roundStarted||this.props.store.status === gameStates.gameStarting)) return;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();
-        this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status:gameStates.roundStarting} });
+        this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: gameStates.roundStarting } });
         setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.roundStarted } }), 10);//todo: another buggy react issue
     }
+
     restartRound = () => {
+        if (!(this.props.store.status === gameStates.roundStarted))return;
         let { ball } = untrackedGameData;
         ball.stop();
         let startRound = this.startRound;
@@ -140,7 +142,7 @@ class Game extends React.Component {
         }
 
         let currentMonitorTimeSeconds = Math.round((new Date().getTime() - roundStartTime) / 1000);
-        console.log("current time seconds: ",currentMonitorTimeSeconds)
+        console.log("current time seconds: ", currentMonitorTimeSeconds)
         let progress;
         let refreshTime = getVelocityRefreshTimeSeconds();
         if (this.props.gameType === gameTypes.SCORE) {

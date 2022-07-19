@@ -2,13 +2,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
 import { Vector } from "y-lib/LayoutBasics";
 
-//todo
+//global constants
+export const gameTypes = { SCORE: 0, LEAD_BY: 1, TIME_OUT: 2 }, DEFAULT_DIFFICULTY = 1, DEFAULT_GAME_TYPE = gameTypes.SCORE
+const preferences = { setString: () => { }, setInt: () => { }, setLong: () => { }, setFloat: () => { }, setBoolean: () => { }, getString: () => { }, setInt: () => { }, getLong: () => { }, getFloat: () => { }, getBoolean: () => { } }
+const bridge = { getField: () => { }, invokeMethod: () => { } }
+
 
 //runtime constants
 export const DEFAULT_RACKET_LENGTH = 75.6, DEFAULT_RACKET_THICKNESS = 30.2, DEFAULT_BALL_RADIUS = 15.1, DEFAULT_BALL_TRANSFORM = "translate(-50%,-50%) ",
     DEFAUlT_GAME_STARTED_MESSAGE = <span style={{ color: "darkgreen", fontWeight: 700, fontFamily: "cursive", fontSize: "20vw" }}>GO!</span>;
 
-export const gameTypes = { SCORE: 0, LEAD_BY: 1, TIME_OUT: 2 }
+
 export const Player = React.createContext(null)
 function shareReducer(store, action) {
     if (action && action.type === "share") {
@@ -22,6 +26,7 @@ export function mapStoreToProp(store) {
 export function mapDispatchToProp(dispatch) {
     return { dispatch: dispatch }
 }
+
 //runtime getters
 export function getStore() {
     let store = configureStore({      //Possible: Alternate use of slices and middleware composers...
@@ -46,34 +51,65 @@ export const untrackedGameData = {
 };
 //preference getters
 export function getInitialVelocity() {//todo: relate with prefs
-    return new Vector(0.1, 0.1)
+    let maxV = new Vector(0.2, 0.2);
+    let minV = new Vector(0.1, 0.1);
+    let change = (maxV.getR() - minV.getR()) * getDifficulty() / 5;
+    console.log("to return max velocity")
+    return minV.setR(minV.getR() + change);
 }
 export function getGameType() {
-    return gameTypes.SCORE
+    console.log("to return gameType")
+    let type = preferences.getInt("game-type");
+    if (type < 0 || type > 2) {
+        type = gameTypes.SCORE
+        setGameType(type)
+    };
+    return type
 }
 export function getAppreciationMessage() {
     return "Nice Game!"
 }
 export function getTargetScore() {
-    return 5;
+    let target = preferences.getInt("target-score");
+    if (!getAllowedTargetScores().includes(target)) {
+        target = 5
+        setTargetScore(target)
+    };
+    return target
 }
 export function getTargetLead() {
-    return 3;
+    let target = preferences.getInt("target-lead");
+    if (!getAllowedTargetLeads().includes(target)) {
+        target = 3
+        setTargetLead(target)
+    };
+    return target
 }
 export function getGameDurationSeconds() {
-    return 60;
+    let duration = preferences.getInt("game-duration");
+    if (!getAllowedGameDurationsSeconds.includes(duration)) {
+        duration = 60
+        setGameDurationSeconds(duration)
+    };
+    return duration
 }
 export function getMaximumDurationSeconds() {
     return 999;
 }
 export function getMaximumVelocity() {
-    return new Vector(0.4, 0.4)
+    let maxV = new Vector(1, 1);
+    let minV = getInitialVelocity();
+    let change = (maxV.getR() - minV.getR()) * getDifficulty() / 5;
+    console.log("to return max velocity")
+    return minV.setR(minV.getR() + change);
 }
 export function getVelocityRefreshTimeSeconds() {
     return 10;
 }
 export function getDifficulty() {
-    return 1;
+    let gameType = getGameType()
+    let suffix = (gameType == gameTypes.TIME_OUT) ? "time-out" : (gameType === gameTypes.LEAD_BY) ? "lead-by" : "score";
+    return preferences.getString("difficulty-" + suffix)
 }
 export function getAllowedTargetLeads() {
     return [2, 3, 4, 5]
@@ -113,14 +149,21 @@ export function getAllowed() {
 }
 //preference setters 
 export function setGameType(type) {
-  console.log("game type set: "+type)
+    if (type !== gameTypes.SCORE && type !== gameTypes.LEAD_BY && type !== gameTypes.TIME_OUT) throw new Error("Illegal argument(s) error")
+    preferences.setInt("game-type", type)
+    console.log("game type set: " + type)
 }
 export function setDifficulty(level) {
-    console.log("difficulty set: "+level)
+    level = Math.round(level)
+    if (level < 1 || level > 5) throw new Error("Illegal argument(s) error")
+    let gameType = getGameType()
+    let suffix = (gameType == gameTypes.TIME_OUT) ? "time-out" : (gameType === gameTypes.LEAD_BY) ? "lead-by" : "score";
+    preferences.setInt("difficulty-" + suffix, level)
+    console.log("difficulty set: " + level)
 
 }
 export function setTarget(target) {
-  switch (getGameType()) {
+    switch (getGameType()) {
         case gameTypes.SCORE: {
             return setTargetScore(target)
         }
@@ -133,10 +176,23 @@ export function setTarget(target) {
     }
 }
 export function contact() {
- console.log("contact requested")
+    console.log("contact requested")
 }
 export function setGameDurationSeconds(duration) {
-    console.log("game duration set: "+duration)
+    if (!getAllowedGameDurationsSeconds.includes(duration)) throw new Error("Illegal argument(s) error")
+    preferences.setInt("game-duration", duration);
+    console.log("target duration set: " + duration)
 }
-export function setTargetScore(score) { console.log("target score set: "+score)}
-export function setTargetLead(lead) {console.log("target lead set: "+lead) }
+export function setTargetScore(score) {
+    if (!getAllowedTargetScores.includes(score)) throw new Error("Illegal argument(s) error")
+    preferences.setInt("target-score", score);
+    console.log("target score set: " + score)
+}
+export function setTargetLead(lead) {
+    if (!getAllowedTargetLeads.includes(lead)) throw new Error("Illegal argument(s) error")
+    preferences.setInt("target-lead", lead);
+    console.log("target lead set: " + lead)
+}
+
+//evals
+

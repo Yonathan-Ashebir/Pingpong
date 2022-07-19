@@ -1,12 +1,11 @@
-import { fontSize } from "@mui/system";
 import anime from "animejs";
 import $ from "jquery";
 import React from "react";
-import { connect } from "react-redux";
+import { connect } from "react-redux"; 
 import { } from "redux";
 import toPX from "to-px";
 import { Vector } from "y-lib/LayoutBasics";
-import { DEFAULT_BALL_RADIUS, DEFAULT_BALL_TRANSFORM, getInitialVelocity, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
+import { DEFAULT_BALL_RADIUS, getInitialVelocity, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
 import { gameStates } from "../management/game";
 //Kept as simple as possible for render issues
 class Ball extends React.Component {

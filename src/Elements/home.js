@@ -1,12 +1,11 @@
-import { Button, ButtonBase, Dialog, DialogActions, DialogContent, DialogTitle, Input, List, ListItem, ListItemButton, Paper, Slider, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Slider, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material"
 import React from "react"
+import { Navigate } from "react-router"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
 import "../css/home.css"
-import { contact, gameTypes, getDifficulty, getGameType, getTargetLead, getTargetScore, getGameDurationSeconds, setDifficulty, setGameType, getAllowedTargetScores, getAllowed, getTarget, setTargetScore } from "../management/data"
-import game from "../management/game"
-import { Navigate } from "react-router"
-import { LinearRangeSelector } from "./LinearRangeSelector"
-import { FadeCarousel } from "./FadeCarousel"
+import { gameTypes, getAllowed, getDifficulty, getGameDurationSeconds, getGameType, getTarget, getTargetLead, getTargetScore, setDifficulty, setGameType, setTargetScore } from "../management/data"
+import { FadeCarousel } from "./fadeCarousel"
+import { LinearRangeSelector } from "./linearRangeSelector"
 export class Home extends React.Component {
     constructor(props) {
         super(props)

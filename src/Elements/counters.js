@@ -1,6 +1,5 @@
 import anime from "animejs";
 import React, { useEffect, useState } from "react";
-import ReactDOM from 'react-dom/client';
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import "../css/counters.css";
 

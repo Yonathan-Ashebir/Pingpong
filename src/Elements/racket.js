@@ -28,11 +28,15 @@ class Racket extends React.Component {
             </div >
         )
     }
+    componentDidUpdate(){
+     this.state.bound = this.element.parentElement.getBoundingClientRect()
+    }
 
     checkBall = (ball) => {
         if (!this.state.visible) return
         let pos = ball.getCenter()
         let s = this.lineSegment.to(new Point(pos.x, pos.y))
+
         if (ball.getRadius() + this.state.thick / 2 >= s.getR() - 2) {
             let v = ball.getVelocity()
             v.resetComponent(s, 1);
@@ -78,14 +82,13 @@ class Racket extends React.Component {
         let { pageX, pageY } = this.state.touch;
         //  if(ev.type=="touchmove")ev.preventDefault();//todo
         this.setPosition(pageX - this.element.offsetWidth / 2, pageY - this.element.offsetHeight / 2)
-
+        this.motionLoop()
 
     }
 
     show = () => {
         $(this.element).addClass("visible")
         this.state.visible = true;
-        this.motionLoop()
     }
 
     hide = () => {
@@ -115,10 +118,10 @@ class Racket extends React.Component {
         }
     }
     position = () => {
-        let boundingRect = this.element.parentElement.getBoundingClientRect()
-        let pos = getCoordinates(this.element, { x: this.state.posX, y: this.state.posY, boundingRect: boundingRect })
-        this.element.style.left = pos.x - boundingRect.left + "px"
-        this.element.style.top = pos.y - boundingRect.top + "px"
+        let bound =this.state.bound
+        let pos = getCoordinates(this.element, { x: this.state.posX, y: this.state.posY, bound: bound })
+        this.element.style.left = pos.x - bound.left + "px"
+        this.element.style.top = pos.y - bound.top + "px"
         let r = this.state.thick / 2
         if (!this.lineSegment) {
             this.lineSegment = new LineSegment(new Point(pos.x + r, pos.y + r), new Point(pos.x + this.state.length - r, pos.y + r))

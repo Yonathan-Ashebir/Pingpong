@@ -36,7 +36,7 @@ class Game extends React.Component {
                 </div>
             )
             buttons = <Stack orientation="horizontal" spacing={2} >
-                <Button style={{ marginTop: "10mm" }} variant="contained" color="primary" onClick={this.startNewGame}><span className="material-icons">replay</span>&nbsp;Restart</Button>
+                <Button style={{ marginTop: "10mm" }} variant="contained" color="primary" onClick={this.restartNewGame}><span className="material-icons">replay</span>&nbsp;Restart</Button>
                 <Button style={{ marginTop: "10mm" }} variant="contained" color="warning" onClick={this.exitGame}><span className="material-icons">close</span>&nbsp;Exit</Button>
             </Stack>
         }
@@ -74,7 +74,7 @@ class Game extends React.Component {
         this.props.dispatch({ type: "share", payload: { status: gameStates.finished, winnerName: (score.red > score.blue) ? "RED" : "BLUE" } });
     }
 
-    startNewGame = () => {
+    restartNewGame = () => {
         if (this.props.store.status === gameStates.paused || this.props.store.status === gameStates.finished)
             this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
     }
@@ -117,7 +117,6 @@ class Game extends React.Component {
     }
 
     startRound = () => {
-        console.log("status at startRund", this.props.store.status)
         if (!(this.props.store.status === gameStates.roundStarted||this.props.store.status === gameStates.gameStarting)) return;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();
         this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: gameStates.roundStarting } });

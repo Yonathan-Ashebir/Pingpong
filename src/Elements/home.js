@@ -23,7 +23,6 @@ export class Home extends React.Component {
         if (this.state.status === "entering game") {
             return <Navigate to="/game"></Navigate>
         }
-        console.log("Home state:",this.state)
         return (
             <div id="home">
                 <Stack spacing={3} alignItems="center" id="main">
@@ -99,7 +98,7 @@ export class Home extends React.Component {
                                             <dt ><span className="game-detail-title">{["Score to win", "Always be a head", "Timer"][this.state.gameType]}</span>
                                             </dt>
                                             <dd className='game-detail-content'>
-                                                {["Be the first to score ", "Beat up you opponent by ", "Retain your lead until all the "][this.state.gameType]} <span className={"count-note"} onClick={this.showCountSelector} className="count-selector">{
+                                                {["Be the first to score ", "Beat up you opponent by ", "Retain your lead until all the "][this.state.gameType]} <span  onClick={this.showCountSelector} className="count-selector">{
                                                     (this.state.gameType === gameTypes.SCORE) ? this.state.gameTargetScore : (this.state.gameType === gameTypes.LEAD_BY) ? this.state.gameTargetLead : this.state.gameTotalDurationSeconds
                                                 } </span>{[" in order to win.", " point to win.", "ms are all up."][this.state.gameType]}
                                             </dd>

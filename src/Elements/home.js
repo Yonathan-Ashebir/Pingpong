@@ -4,7 +4,7 @@ import { Navigate } from "react-router"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
 import "../css/home.css"
 import { gameTypes, getAllowed, getDifficulty, getGameDurationSeconds, getGameType, getTarget, getTargetLead, getTargetScore, setDifficulty, setGameType, setTargetScore } from "../management/data"
-import { FadeCarousel } from "./fadeCarousel"
+import { FadeCarousel } from "./fadeCarousel" 
 import { LinearRangeSelector } from "./linearRangeSelector"
 export class Home extends React.Component {
     constructor(props) {

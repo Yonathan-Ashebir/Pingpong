@@ -1,7 +1,7 @@
 import proptypes from "proptypes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import "../css/fade-carousel.css";   
+import "../css/fade-carousel.css";
 /**valid props: 
  ** interval - per display
  ** children - children 
@@ -10,17 +10,23 @@ import "../css/fade-carousel.css";
    */
 export function FadeCarousel(props) {
     let [index, setIndex] = useState(props.startIndex ? props.startIndex : props.random ? Math.floor(Math.random() * props.children.length) : 0);
+    let [firstTime, setFirstTime] = useState(true);
     let change = () => {
         let ind;
         if (props.random) ind = Math.floor(Math.random() * props.children.length);
         else ind = (index >= props.children.length - 1) ? 0 : (index < 0) ? 0 : index + 1;
         setIndex(ind)
     }
-
-    setTimeout(change, props.interval ? props.interval : 3000)
+    console.log("setTimeout invokded")
+    useEffect(()=>{
+        if(firstTime){
+            setFirstTime(false)
+            setTimeout(change, props.interval ? props.interval : 3000)
+        }
+    })
     return (
         <SwitchTransition mode="out-in">
-            <CSSTransition onEntered={() => { }} key={index} classNames="fade-carousel" addEndListener={(node, call) => node.addEventListener('transitionend', (ev) => { if (ev.propertyName === "opacity") call() }, false)}>
+            <CSSTransition onEntered={() => { setTimeout(change, props.interval ? props.interval : 3000) }} key={index} classNames="fade-carousel" addEndListener={(node, call) => node.addEventListener('transitionend', (ev) => { if (ev.propertyName === "opacity") call() }, false)}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     {props.children[index]}
                 </div>

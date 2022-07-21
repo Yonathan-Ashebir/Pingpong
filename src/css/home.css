@@ -9,7 +9,6 @@
     flex-flow: column nowrap;
     height: 100%;
     width: 100%;
-    background-image: linear-gradient(122deg, #ff000077, #0000ff77);
 }
 
 #home>#main {
@@ -25,11 +24,11 @@
     width: 3cm;
 }
 
-#home>#main>#phrase {
+#home>#main #phrase {
     max-height: 3em;
     font-family: Graduate;
     font-weight: 700;
-    letter-spacing: 0.7em;
+    letter-spacing: 0.7ex;
 }
 
 #home>#main>#prefs {

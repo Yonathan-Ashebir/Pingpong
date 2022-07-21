@@ -1,4 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Slider, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material"
+import anime from "animejs"
 import React from "react"
 import { Navigate } from "react-router"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
@@ -18,13 +19,14 @@ export class Home extends React.Component {
             gameTargetScore: getTargetScore(),
             gameTargetLead: getTargetLead()
         };
+    
     }
     render() {
         if (this.state.status === "entering game") {
             return <Navigate to="/game"></Navigate>
         }
         return (
-            <div id="home">
+            <div id="home" ref={((el=>{this.element=el; window.home =el}).bind(this))}>
                 <Stack spacing={3} alignItems="center" id="main">
                     <Button variant="text" onClick={() => { this.setState({ status: "entering game" }) }}>
                         <FadeCarousel random={false}>
@@ -33,7 +35,7 @@ export class Home extends React.Component {
                                     <svg version="1.1" id="Capa_1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 30.333 30.333" style={{ enableBackground: "new 0 0 30.333 30.333" }} space="preserve"> <g> <g> <g> <path d="M22.536,25.234c-0.742-0.429-1.586-0.914-2.424-1.699c-1.533-1.435-1.639-3.874-1.55-5.287h1.062 c0.59,0,0.994-0.598,0.773-1.146l-0.962-2.393h-2.969l-0.962,2.393c-0.221,0.55,0.184,1.146,0.775,1.146h0.772 c-0.097,1.699,0.081,4.559,2.03,6.383c0.965,0.902,1.888,1.435,2.699,1.903c1.432,0.827,2.221,1.282,2.4,3.122 c0.037,0.388,0.362,0.677,0.744,0.677c0.024,0,0.05-0.001,0.073-0.003c0.412-0.041,0.715-0.407,0.674-0.819 C25.425,26.902,24.022,26.092,22.536,25.234z" /> <path d="M12.914,21.889l-0.962-2.393H8.984l-0.963,2.393c-0.221,0.55,0.184,1.146,0.775,1.146h0.773 c-0.097,1.699,0.082,4.559,2.031,6.383c0.145,0.135,0.329,0.202,0.513,0.202c0.2,0,0.4-0.08,0.548-0.238 c0.283-0.302,0.267-0.775-0.035-1.06c-1.534-1.435-1.639-3.874-1.55-5.287h1.063C12.732,23.035,13.135,22.438,12.914,21.889z" /> <path d="M11.141,6.732c0-0.642,0.076-1.263,0.207-1.86c-0.288-0.051-0.58-0.085-0.88-0.085c-3.21,0-5.813,3.014-5.813,6.732 c0,3.718,2.603,6.731,5.813,6.731c2.427,0,4.504-1.725,5.375-4.171C13.116,13.068,11.141,10.159,11.141,6.732z M9.504,8.584 c-0.789,0-1.432,0.803-1.432,1.791c0,0.552-0.447,1-1,1s-1-0.448-1-1c0-2.09,1.539-3.791,3.432-3.791c0.553,0,1,0.448,1,1 C10.504,8.136,10.057,8.584,9.504,8.584z" /> <path d="M17.954,13.463c3.209,0,5.813-3.014,5.813-6.731C23.768,3.014,21.163,0,17.954,0c-3.21,0-5.813,3.014-5.813,6.732 C12.141,10.45,14.743,13.463,17.954,13.463z M17.447,1.405c0.554,0,1,0.448,1,1c0,0.552-0.446,1-1,1 c-0.789,0-1.433,0.803-1.433,1.791c0,0.552-0.446,1-1,1c-0.553,0-1-0.448-1-1C14.016,3.105,15.555,1.405,17.447,1.405z" /> </g> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>
 
                                 </div> 
-                                <div id="phrase">A game for two.</div>
+                                <div id="phrase">A game for two</div>
                             </Stack>
                             <Stack spacing={3} alignItems="center" >
                                 <div id="logo">
@@ -161,6 +163,11 @@ export class Home extends React.Component {
             </div >
         )
     }
+    componentDidMount(){ 
+        anime({targets: this.element,backgroundImage:["linear-gradient(120deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(300deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(-180deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(0deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(120deg,rgba(255,0,0,77),rgba(0,0,255,77))"],loop:true,duration:30000,easing:"linear",direction:"alternate"})
+        // anime({targets: this.element,backgroundImage:["linear-gradient(122deg, rgba(40,0,200,80) -50%, rgba(200,0,40,80) -30%, rgba(40,0,200,80) -10%, rgba(200,0,40,80) 10%, rgba(40,0,200,80) 40%, rgba(200,0,40,80) 70%, rgba(40,0,200,80) 90%, rgba(200,0,40,80)  110%)","linear-gradient(122deg, rgba(40,0,200,80) -30%, rgba(200,0,40,80) 10%, rgba(40,0,200,80) 40%, rgba(200,0,40,80) 70%, rgba(40,0,200,80) 90%, rgba(200,0,40,80) 110%, rgba(40,0,200,80) 130%, rgba(200,0,40,80)  150%)"],loop:true,duration:5000,easing:"linear"})
+       
+    }
     showContactDialog = () => {
         this.setState({ contactDialogOpened: true })
     }
@@ -171,3 +178,5 @@ export class Home extends React.Component {
         this.setState({ contactDialogOpened: false })
     }
 }
+/* rgba(0,0,255,119) =blue
+rgba(255,0,0,119)=red */

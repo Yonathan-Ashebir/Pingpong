@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Route, Routes } from 'react-router';
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import './App.css';
 import Home from './Elements/home';
 import { getGameType, mapDispatchToProp, mapStoreToProp, untrackedGameData } from './management/data';
@@ -16,17 +16,15 @@ class App extends React.Component {
   }
   render() {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
-          <Route path="/android_asset/index.html">
             <Route index element={<Home />}></Route>
             <Route path='game' element={
               <Game gameType={getGameType()} saveState={this.saveState} />
             }>
             </Route>
-          </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     )
   }
 

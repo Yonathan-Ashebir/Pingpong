@@ -11,7 +11,7 @@ class Racket extends React.Component {
         this.state = {
             thick: DEFAULT_RACKET_THICKNESS,
             length: DEFAULT_RACKET_LENGTH,
-            touch: null,
+            touch: null, 
             posX: undefined,
             posY: undefined,
             visible: false

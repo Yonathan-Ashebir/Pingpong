@@ -1,13 +1,17 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Slider, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material"
 import anime from "animejs"
 import React from "react"
+import { connect } from "react-redux"
 import { Navigate } from "react-router"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
 import "../css/home.css"
-import { gameTypes, getAllowed, getDifficulty, getGameDurationSeconds, getGameType, getTarget, getTargetLead, getTargetScore, setDifficulty, setGameType, setTargetScore } from "../management/data"
-import { FadeCarousel } from "./fadeCarousel" 
+import { gameTypes, getAllowed, getDifficulty, getGameDurationSeconds, getGameType, getTarget, getTargetLead, getTargetScore, mapDispatchToProp, mapStoreToProp, setDifficulty, setGameType, setTargetScore } from "../management/data"
+import { gameStates } from "../management/game"
+import { FadeCarousel } from "./fadeCarousel"
 import { LinearRangeSelector } from "./linearRangeSelector"
-export class Home extends React.Component {
+import {} from "styled-components"
+
+ class Home extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -19,14 +23,15 @@ export class Home extends React.Component {
             gameTargetScore: getTargetScore(),
             gameTargetLead: getTargetLead()
         };
-    
+
     }
     render() {
         if (this.state.status === "entering game") {
-            return <Navigate to="/game"></Navigate>
+          this.props.dispatch({ type: "share", payload: { status: gameStates.launched } });
+            return <Navigate to="./game"></Navigate>
         }
         return (
-            <div id="home" ref={((el=>{this.element=el; window.home =el}).bind(this))}>
+            <div style={{backgroundImage:"linear-gradient(120deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))"}}id="home" ref={((el => { this.element = el; window.home = el }).bind(this))}>
                 <Stack spacing={3} alignItems="center" id="main">
                     <Button variant="text" onClick={() => { this.setState({ status: "entering game" }) }}>
                         <FadeCarousel random={false}>
@@ -34,7 +39,7 @@ export class Home extends React.Component {
                                 <div id="logo">
                                     <svg version="1.1" id="Capa_1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 30.333 30.333" style={{ enableBackground: "new 0 0 30.333 30.333" }} space="preserve"> <g> <g> <g> <path d="M22.536,25.234c-0.742-0.429-1.586-0.914-2.424-1.699c-1.533-1.435-1.639-3.874-1.55-5.287h1.062 c0.59,0,0.994-0.598,0.773-1.146l-0.962-2.393h-2.969l-0.962,2.393c-0.221,0.55,0.184,1.146,0.775,1.146h0.772 c-0.097,1.699,0.081,4.559,2.03,6.383c0.965,0.902,1.888,1.435,2.699,1.903c1.432,0.827,2.221,1.282,2.4,3.122 c0.037,0.388,0.362,0.677,0.744,0.677c0.024,0,0.05-0.001,0.073-0.003c0.412-0.041,0.715-0.407,0.674-0.819 C25.425,26.902,24.022,26.092,22.536,25.234z" /> <path d="M12.914,21.889l-0.962-2.393H8.984l-0.963,2.393c-0.221,0.55,0.184,1.146,0.775,1.146h0.773 c-0.097,1.699,0.082,4.559,2.031,6.383c0.145,0.135,0.329,0.202,0.513,0.202c0.2,0,0.4-0.08,0.548-0.238 c0.283-0.302,0.267-0.775-0.035-1.06c-1.534-1.435-1.639-3.874-1.55-5.287h1.063C12.732,23.035,13.135,22.438,12.914,21.889z" /> <path d="M11.141,6.732c0-0.642,0.076-1.263,0.207-1.86c-0.288-0.051-0.58-0.085-0.88-0.085c-3.21,0-5.813,3.014-5.813,6.732 c0,3.718,2.603,6.731,5.813,6.731c2.427,0,4.504-1.725,5.375-4.171C13.116,13.068,11.141,10.159,11.141,6.732z M9.504,8.584 c-0.789,0-1.432,0.803-1.432,1.791c0,0.552-0.447,1-1,1s-1-0.448-1-1c0-2.09,1.539-3.791,3.432-3.791c0.553,0,1,0.448,1,1 C10.504,8.136,10.057,8.584,9.504,8.584z" /> <path d="M17.954,13.463c3.209,0,5.813-3.014,5.813-6.731C23.768,3.014,21.163,0,17.954,0c-3.21,0-5.813,3.014-5.813,6.732 C12.141,10.45,14.743,13.463,17.954,13.463z M17.447,1.405c0.554,0,1,0.448,1,1c0,0.552-0.446,1-1,1 c-0.789,0-1.433,0.803-1.433,1.791c0,0.552-0.446,1-1,1c-0.553,0-1-0.448-1-1C14.016,3.105,15.555,1.405,17.447,1.405z" /> </g> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>
 
-                                </div> 
+                                </div>
                                 <div id="phrase">A game for two</div>
                             </Stack>
                             <Stack spacing={3} alignItems="center" >
@@ -100,7 +105,7 @@ export class Home extends React.Component {
                                             <dt ><span className="game-detail-title">{["Score to win", "Always be a head", "Timer"][this.state.gameType]}</span>
                                             </dt>
                                             <dd className='game-detail-content'>
-                                                {["Be the first to score ", "Beat up you opponent by ", "Retain your lead until all the "][this.state.gameType]} <span  onClick={this.showCountSelector} className="count-selector">{
+                                                {["Be the first to score ", "Beat up you opponent by ", "Retain your lead until all the "][this.state.gameType]} <span onClick={this.showCountSelector} className="count-selector">{
                                                     (this.state.gameType === gameTypes.SCORE) ? this.state.gameTargetScore : (this.state.gameType === gameTypes.LEAD_BY) ? this.state.gameTargetLead : this.state.gameTotalDurationSeconds
                                                 } </span>{[" in order to win.", " point to win.", "ms are all up."][this.state.gameType]}
                                             </dd>
@@ -148,7 +153,7 @@ export class Home extends React.Component {
                         <DialogTitle><span style={{ fontFamily: "Graduate" }}>Choose one</span></DialogTitle>
                         <DialogContent>
                             <ul className="contact-list">
-                                <Button  color="primary" onClick={this.hideContactDialog} className="contact-option"variant="text"><a><span className="material-icons">mail</span>&nbsp;&nbsp;Contact via email</a> </Button>
+                                <Button color="primary" onClick={this.hideContactDialog} className="contact-option" variant="text"><a><span className="material-icons">mail</span>&nbsp;&nbsp;Contact via email</a> </Button>
                                 <Button variant="text" color="primary" onClick={this.hideContactDialog} className="contact-option"><a><svg width="24px" height="24px" viewBox="0 0 24 24">
                                     <path d="M7,12 L14.5,12 C16.277025,12 17.7447372,10.6756742 17.970024,8.96013518 C16.2885152,8.7047201 15,7.25283448 15,5.5 C15,3.56700338 16.5670034,2 18.5,2 C20.4329966,2 22,3.56700338 22,5.5 C22,7.27155475 20.6838151,8.73569805 18.9759671,8.96790818 C18.7419236,11.2333126 16.8272778,13 14.5,13 L7,13 L7,15.0354444 C8.69614707,15.2780593 10,16.736764 10,18.5 C10,20.4329966 8.43299662,22 6.5,22 C4.56700338,22 3,20.4329966 3,18.5 C3,16.736764 4.30385293,15.2780593 6,15.0354444 L6,8.96455557 C4.30385293,8.72194074 3,7.26323595 3,5.5 C3,3.56700338 4.56700338,2 6.5,2 C8.43299662,2 10,3.56700338 10,5.5 C10,7.26323595 8.69614707,8.72194074 7,8.96455557 L7,12 Z M4,18.5 C4,19.8807119 5.11928813,21 6.5,21 C7.88071187,21 9,19.8807119 9,18.5 C9,17.1192881 7.88071187,16 6.5,16 C5.11928813,16 4,17.1192881 4,18.5 Z M4,5.5 C4,6.88071187 5.11928813,8 6.5,8 C7.88071187,8 9,6.88071187 9,5.5 C9,4.11928813 7.88071187,3 6.5,3 C5.11928813,3 4,4.11928813 4,5.5 Z M18.5,3 C17.1192881,3 16,4.11928813 16,5.5 C16,6.88071187 17.1192881,8 18.5,8 C19.8807119,8 21,6.88071187 21,5.5 C21,4.11928813 19.8807119,3 18.5,3 Z" />
                                 </svg>&nbsp;&nbsp;Follow on github</a></Button>
@@ -163,10 +168,9 @@ export class Home extends React.Component {
             </div >
         )
     }
-    componentDidMount(){ 
-        anime({targets: this.element,backgroundImage:["linear-gradient(120deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(300deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(-180deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(0deg,rgba(255,0,0,77),rgba(0,0,255,77))","linear-gradient(120deg,rgba(255,0,0,77),rgba(0,0,255,77))"],loop:true,duration:30000,easing:"linear",direction:"alternate"})
-        // anime({targets: this.element,backgroundImage:["linear-gradient(122deg, rgba(40,0,200,80) -50%, rgba(200,0,40,80) -30%, rgba(40,0,200,80) -10%, rgba(200,0,40,80) 10%, rgba(40,0,200,80) 40%, rgba(200,0,40,80) 70%, rgba(40,0,200,80) 90%, rgba(200,0,40,80)  110%)","linear-gradient(122deg, rgba(40,0,200,80) -30%, rgba(200,0,40,80) 10%, rgba(40,0,200,80) 40%, rgba(200,0,40,80) 70%, rgba(40,0,200,80) 90%, rgba(200,0,40,80) 110%, rgba(40,0,200,80) 130%, rgba(200,0,40,80)  150%)"],loop:true,duration:5000,easing:"linear"})
-       
+    componentDidMount() {
+        anime({ targets: this.element, backgroundImage: ["linear-gradient(300deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))", "linear-gradient(-180deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))", "linear-gradient(0deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))", "linear-gradient(120deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))"], loop: true, duration: 30000, easing: "linear", direction: "alternate" })
+
     }
     showContactDialog = () => {
         this.setState({ contactDialogOpened: true })
@@ -180,3 +184,5 @@ export class Home extends React.Component {
 }
 /* rgba(0,0,255,119) =blue
 rgba(255,0,0,119)=red */
+
+export default connect(mapStoreToProp,mapDispatchToProp)(Home)

@@ -16,13 +16,14 @@ class Game extends React.Component {
         super(props);
         untrackedGameData.game = this;
         this.state = { lastMonitorTimeSeconds: null }
+        window.pauseGame = this.pauseGame;
     }
 
     render() {
         console.log("at game render method: ", this.props.store?.status)
         // setTimeout(() => { window.mStore = this.props.store; window.untracked = untrackedGameData }, 100) //todo
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
-        if (status === "exiting") return (<Navigate to="/"></Navigate>)
+        if (status === "exiting") return (<Navigate to="../"></Navigate>)
         let scoreDisplay, buttons;
         if (status === gameStates.finished) {
             let countDoneStyle = {
@@ -64,7 +65,6 @@ class Game extends React.Component {
     componentDidMount() {
         this.trackGroundSize();
         document.body.onresize = this.trackGroundSize;
-        this.props.dispatch({ type: "share", payload: { status: gameStates.launched } })
     }
     componentDidUpdate() {
         if(this.props.store?.status===gameStates.gameStarting)this.startRound();
@@ -92,9 +92,9 @@ class Game extends React.Component {
         let gameTime = currentTime - this.props.store.gameStartTime;
         let roundTime = currentTime - this.props.store.roundStartTime;
         this.props.dispatch({ type: "share", payload: { gameTime: gameTime, roundTime: roundTime, status: gameStates.pausing, gameStartTime: undefined, roundStartTime: undefined } })
-        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.paused } }), 10)
+        Promise.resolve().then(() => this.props.dispatch({ type: "share", payload: { status: gameStates.paused } })).then(()=>this.props.saveState())
     }
-
+     
     resumeGame = () => {
         if (!(this.props.store.status === gameStates.paused)) return;
         let currentTime = new Date().getTime()
@@ -111,6 +111,8 @@ class Game extends React.Component {
     }
 
     updateScoreAndRestart = (score) => {
+        if(!(score.blue>=0||score.red>=0))throw new Error("Illegal argument(s) error")
+        
         this.props.dispatch({ type: "share", payload: { score: { red: Math.round(score.red), blue: Math.round(score.blue), target: this.props.store.score.target } } });
         this.monitor();
         this.restartRound();
@@ -134,7 +136,7 @@ class Game extends React.Component {
     monitor = () => {
         if (!(this.props.store.status === gameStates.roundStarted)) return;
         clearTimeout(this.state.monitorId)
-        console.log("monitoring")
+        console.log("monitoring and gameTypes are: ",gameTypes)
         let { score, gameStartTime, gameTotalDurationSeconds, roundStartTime } = this.props.store;
         if (new Date().getTime() - gameStartTime >= gameTotalDurationSeconds * 1000) {
             this.gameFinished(); return;
@@ -153,7 +155,7 @@ class Game extends React.Component {
         } else if (this.props.gameType === gameTypes.TIME_OUT) {
             if (currentMonitorTimeSeconds - this.state.lastMonitorTimeSeconds > refreshTime) progress = currentMonitorTimeSeconds / gameTotalDurationSeconds;
         }
-        else if (this.props.gameType === gameTypes.TIME_OUT) {
+        else if (this.props.gameType === gameTypes.LEAD_BY) {
             if (Math.abs(score.red - score.blue) >= score.target) {
                 this.gameFinished(); return;
             }

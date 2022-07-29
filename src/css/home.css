@@ -1,14 +1,10 @@
-@font-face {
-    font-family: Graduate;
-    src: url(../fonts/Graduate-Regular.ttf);
-
-}
 
 #home {
     display: flex;
     flex-flow: column nowrap;
     height: 100%;
     width: 100%;
+    background-image: linear-gradient(120deg,rgba(255,0,0,77),rgba(0,0,255,77));
 }
 
 #home>#main {
@@ -164,8 +160,26 @@ span#difficulty-label {
     height: 100%;
 }
 
+.contact-list>.contact-option {
+    padding: 3mm;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    color:#555555;
+}
+
+.contact-list>.contact-option>a {
+    display: inherit;
+    justify-content: space-between;
+}
 
 
+
+ul.contact-list {
+    list-style: none;
+    padding: 1mm;
+    margin: 0;
+}
 
 
 
@@ -207,22 +221,3 @@ span#difficulty-label {
 }
 
 
-.contact-list>.contact-option {
-    padding: 3mm;
-    display: flex;
-    text-align: center;
-    align-items: center;
-}
-
-.contact-list>.contact-option>a {
-    display: inherit;
-    justify-content: space-between;
-}
-
-
-
-ul.contact-list {
-    list-style: none;
-    padding: 1mm;
-    margin: 0;
-}

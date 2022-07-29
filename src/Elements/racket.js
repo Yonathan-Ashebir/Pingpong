@@ -16,7 +16,7 @@ class Racket extends React.Component {
             posY: undefined,
             visible: false
         };
-       untrackedGameData[this.props.position + "Racket"]=this;
+        untrackedGameData[this.props.position + "Racket"] = this;
     }
 
     render() {
@@ -28,7 +28,7 @@ class Racket extends React.Component {
             </div >
         )
     }
-    componentDidUpdate(){
+    componentDidUpdate() {
      this.state.bound = this.element.parentElement.getBoundingClientRect()
     }
 
@@ -68,6 +68,7 @@ class Racket extends React.Component {
             this.state.touch = this.selectTouch(ev)
             if (this.state.touch == null) return;
             this.show();
+            this.motionLoop()
         } else {
             if ((this.state.touch = this.getTouchWithIdentifier(this.state.touch.identifier, ev.touches)) == null) this.state.touch = this.selectTouch(ev)
             if (this.state.touch == null) { this.hide(); return }
@@ -82,18 +83,18 @@ class Racket extends React.Component {
         let { pageX, pageY } = this.state.touch;
         //  if(ev.type=="touchmove")ev.preventDefault();//todo
         this.setPosition(pageX - this.element.offsetWidth / 2, pageY - this.element.offsetHeight / 2)
-        this.motionLoop()
+        
 
     }
 
-    show = () => {
-        $(this.element).addClass("visible")
+    show = () => { 
         this.state.visible = true;
+        $(this.element).addClass("visible")  
     }
 
     hide = () => {
-        $(this.element).removeClass("visible")
         this.state.visible = false;
+        $(this.element).removeClass("visible")
     }
     /* *Selects the best touch. i.e. a touch
     - the first changed touch if the event is of type start or move
@@ -118,10 +119,10 @@ class Racket extends React.Component {
         }
     }
     position = () => {
-        let bound =this.state.bound
+        let bound = this.state.bound
         let pos = getCoordinates(this.element, { x: this.state.posX, y: this.state.posY, bound: bound })
-        this.element.style.left = pos.x - bound.left + "px"
-        this.element.style.top = pos.y - bound.top + "px"
+        this.element.style.transform = "translate(" + (pos.x - bound.left) + "px, " + (pos.y - bound.top) + "px) scale("+(this.state.visible?1:0.7)+")"
+
         let r = this.state.thick / 2
         if (!this.lineSegment) {
             this.lineSegment = new LineSegment(new Point(pos.x + r, pos.y + r), new Point(pos.x + this.state.length - r, pos.y + r))

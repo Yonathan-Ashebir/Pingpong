@@ -57,7 +57,7 @@ body {
     margin: 0px;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(180deg, red 30%, blue 70%);
+    background-image: linear-gradient(180deg, #ff0000dd 30%, #0000ffdd 70%);
 }
 
 #ball {
@@ -98,7 +98,6 @@ body {
 
 .racket.visible {
     opacity: 1;
-    transform: scale(1);
 }
 
 #controls {

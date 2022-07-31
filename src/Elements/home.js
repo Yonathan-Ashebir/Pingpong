@@ -106,7 +106,7 @@ class Home extends React.Component {
                                             <dd className='game-detail-content'>
                                                 {["Be the first to score ", "Beat up you opponent by ", "Retain your lead until all the "][this.state.gameType]} <span onClick={this.showCountSelector} className="count-selector">{
                                                     getTarget()
-                                                } </span>{[" in order to win.", " point to win.", "ms are all up."][this.state.gameType]}
+                                                } </span>{[" in order to win.", " points to win.", "seconds are all up."][this.state.gameType]}
                                             </dd>
                                         </div>
                                     </CSSTransition>

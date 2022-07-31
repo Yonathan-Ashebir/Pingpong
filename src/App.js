@@ -41,7 +41,6 @@ class App extends React.Component {
 
 
   saveState = () => {
-    console.log("status during saving: ", this.props.store.status)
     if (this.props.store?.status === gameStates.paused) {
       let state = {};
       let container = {};

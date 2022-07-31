@@ -48,17 +48,14 @@ export function getStore() {
 export const untrackedGameData = {
 
 };
-window.untrackedGameData = untrackedGameData
 //preference getters
 export function getInitialVelocity() {
     let maxV = new Vector(0.2, 0.2);
     let minV = new Vector(0.1, 0.1);
     let change = (maxV.getR() - minV.getR()) * getDifficulty() / 5;
-    console.log("to return max velocity")
     return minV.setR(minV.getR() + change);
 }
 export function getGameType() {
-    console.log("to return gameType")
     let type = window.preferences.getInteger("game_type");
     if (!(type >= 0 && type <= 2)) {
         type = gameTypes.SCORE
@@ -100,7 +97,6 @@ export function getMaximumVelocity() {
     let maxV = new Vector(1, 1);
     let minV = getInitialVelocity();
     let change = (maxV.getR() - minV.getR()) * getDifficulty() / 5;
-    console.log("to return max velocity")
     return minV.setR(minV.getR() + change/2);
 }
 export function getVelocityRefreshTimeSeconds() {
@@ -153,7 +149,6 @@ export function getAllowed() {
 export function setGameType(type) {
     if (type !== gameTypes.SCORE && type !== gameTypes.LEAD_BY && type !== gameTypes.TIME_OUT) throw new Error("Illegal argument(s) error")
     window.preferences.setInteger("game_type", type)
-    console.log("game type set: " + type)
 }
 export function setDifficulty(level) {
     level = Math.round(level)
@@ -161,7 +156,6 @@ export function setDifficulty(level) {
     let gameType = getGameType()
     let suffix = (gameType == gameTypes.TIME_OUT) ? "time_out" : (gameType === gameTypes.LEAD_BY) ? "lead_by" : "score";
     window.preferences.setInteger("difficulty_" + suffix, level)
-    console.log("difficulty set: " + level)
 
 }
 export function setTarget(target) {
@@ -177,23 +171,18 @@ export function setTarget(target) {
         }
     }
 }
-export function contact() {
-    console.log("contact requested")
-}
+
 export function setGameDurationSeconds(duration) {
     if (!getAllowedGameDurationsSeconds().includes(duration)) throw new Error("Illegal argument(s) error")
     window.preferences.setInteger("game_duration", duration);
-    console.log("target duration set: " + duration)
 }
 export function setTargetScore(score) {
     if (!getAllowedTargetScores().includes(score)) throw new Error("Illegal argument(s) error")
     window.preferences.setInteger("target_score", score);
-    console.log("target score set: " + score)
 }
 export function setTargetLead(lead) {
     if (!getAllowedTargetLeads().includes(lead)) throw new Error("Illegal argument(s) error")
     window.preferences.setInteger("target_lead", lead);
-    console.log("target lead set: " + lead)
 }
 
 //evals

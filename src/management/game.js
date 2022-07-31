@@ -20,7 +20,6 @@ class Game extends React.Component {
     }
 
     render() {
-        console.log("game rerendered with store: ", this.props.store)
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
         if (status === "exiting") return (<Navigate to="../"></Navigate>)
         let scoreDisplay, buttons;
@@ -57,7 +56,6 @@ class Game extends React.Component {
                         } score={scoreDisplay} message={(score.red == score.blue) ? getAppreciationMessage() : "WINS"} others={buttons}></WinnerDialog>
                     ) : null}
                 </FullScreenDialog>
-                <Buttons />
             </>
         );
     }
@@ -126,7 +124,7 @@ class Game extends React.Component {
         if (!(this.props.store.status === gameStates.roundStarted || this.props.store.status === gameStates.gameStarting)) return;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();
         this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: gameStates.roundStarting } });
-        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.roundStarted } }), 10);//todo: another buggy react issue
+        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.roundStarted } }), 10);
     }
 
     restartRound = () => {
@@ -188,23 +186,6 @@ class Game extends React.Component {
         }
     }
 
-}
-function Buttons(props) {
-    let { game } = untrackedGameData
-    let buttons = []
-    for (let key in game) {
-        if (typeof game[key] === "function") {
-            buttons.push(<button key={key} onClick={game[key]}>
-                {key}
-            </button>)
-        }
-    }
-
-    return (
-        <div style={{ position: "absolute", bottom: "2px" }}>
-            {buttons}
-        </div>
-    )
 }
 
 export default connect(mapStoreToProp, mapDispatchToProp)(Game);

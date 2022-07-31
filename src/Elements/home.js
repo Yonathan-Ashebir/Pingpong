@@ -5,18 +5,17 @@ import { connect } from "react-redux"
 import { Navigate } from "react-router"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
 import "../css/home.css"
-import { gameTypes, getAllowed, getDifficulty, getGameDurationSeconds, getGameType, getTarget, getTargetLead, getTargetScore, mapDispatchToProp, mapStoreToProp, setDifficulty, setGameType, setTargetScore } from "../management/data"
+import { gameTypes, getAllowed, getDifficulty, getGameDurationSeconds, getGameType, getTarget, getTargetLead, getTargetScore, mapDispatchToProp, mapStoreToProp, setDifficulty, setGameType, setTarget, setTargetScore } from "../management/data"
 import { gameStates } from "../management/game"
 import { FadeCarousel } from "./fadeCarousel"
 import { LinearRangeSelector } from "./linearRangeSelector"
-import {} from "styled-components"
+import { } from "styled-components"
 
- class Home extends React.Component {
+class Home extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             gameType: getGameType(),
-            difficulty: getDifficulty(),
             status: "opened", contactDialogOpened: false,
             countDialogOpened: false,
             gameTotalDurationSeconds: getGameDurationSeconds(),
@@ -27,11 +26,11 @@ import {} from "styled-components"
     }
     render() {
         if (this.state.status === "entering game") {
-          this.props.dispatch({ type: "share", payload: { status: gameStates.launched } });
+            this.props.dispatch({ type: "share", payload: { status: gameStates.launched } });
             return <Navigate to="./game"></Navigate>
         }
         return (
-            <div style={{backgroundImage:"linear-gradient(120deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))"}}id="home" ref={((el => { this.element = el; window.home = el }).bind(this))}>
+            <div style={{ backgroundImage: "linear-gradient(120deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))" }} id="home" ref={((el => { this.element = el; window.home = el }).bind(this))}>
                 <Stack spacing={3} alignItems="center" id="main">
                     <Button variant="text" onClick={() => { this.setState({ status: "entering game" }) }}>
                         <FadeCarousel random={false}>
@@ -102,11 +101,11 @@ import {} from "styled-components"
 
                                     <CSSTransition key={this.state.gameType} classNames='details' addEndListener={(node, call) => { node.addEventListener("transitionend", (ev) => { if (ev.propertyName === "max-height") call(ev) }, false) }} >
                                         <div id="game-type-detail">
-                                            <dt ><span className="game-detail-title">{["Score to win", "Always be a head", "Timer"][this.state.gameType]}</span>
+                                            <dt ><span className="game-detail-title">{["Score to win", "Always be ahead", "Timer"][this.state.gameType]}</span>
                                             </dt>
                                             <dd className='game-detail-content'>
                                                 {["Be the first to score ", "Beat up you opponent by ", "Retain your lead until all the "][this.state.gameType]} <span onClick={this.showCountSelector} className="count-selector">{
-                                                    (this.state.gameType === gameTypes.SCORE) ? this.state.gameTargetScore : (this.state.gameType === gameTypes.LEAD_BY) ? this.state.gameTargetLead : this.state.gameTotalDurationSeconds
+                                                    getTarget()
                                                 } </span>{[" in order to win.", " point to win.", "ms are all up."][this.state.gameType]}
                                             </dd>
                                         </div>
@@ -118,10 +117,10 @@ import {} from "styled-components"
                         <Paper elevation={3} id="difficulty-card" >
                             <span id="difficulty-label">Difficulty:&nbsp;</span>
                             <Slider
-                                defaultValue={this.state.difficulty}
+                                value={getDifficulty()}
                                 valueLabelDisplay="auto"
                                 marks={true}
-                                min={0}
+                                min={1}
                                 max={5}
                                 onChange={((ev, val) => { setDifficulty(val); this.setState({ difficulty: val }) }).bind(this)}
                             />
@@ -136,12 +135,12 @@ import {} from "styled-components"
                 <div className="collapsed">
                     <Dialog open={this.state.countDialogOpened}>
                         <DialogTitle style={{ fontSize: "1em", color: "grey" }}>
-                            {(this.state.gameType === gameTypes.SCORE) ? "Choose your target score" : (this.state.gameType === gameTypes.LEAD_BY) ? "Decide how far a head the winner should be" : "How long should the game be ?"}
+                            {(this.state.gameType === gameTypes.SCORE) ? "Choose your target score" : (this.state.gameType === gameTypes.LEAD_BY) ? "Decide how far ahead the winner should be" : "How long should the game be ?"}
                         </DialogTitle>
                         <DialogContent sx={{ display: "flex", justifyContent: "center" }}>
-                            <LinearRangeSelector values={getAllowed()} initial={getTarget()} onSelect={((ev, index) => {
+                            <LinearRangeSelector values={getAllowed()} initial={getAllowed().indexOf(getTarget())} onSelect={((ev, index) => {
                                 this.setState({ countDialogOpened: false })
-                                setTargetScore(getAllowed()[index])
+                                setTarget(getAllowed()[index])
                             }).bind(this)} />
                         </DialogContent>
                         <DialogActions>
@@ -153,8 +152,8 @@ import {} from "styled-components"
                         <DialogTitle><span style={{ fontFamily: "Graduate" }}>Choose one</span></DialogTitle>
                         <DialogContent>
                             <ul className="contact-list">
-                                <Button color="primary" onClick={this.hideContactDialog} className="contact-option" variant="text"><a><span className="material-icons">mail</span>&nbsp;&nbsp;Contact via email</a> </Button>
-                                <Button variant="text" color="primary" onClick={this.hideContactDialog} className="contact-option"><a><svg width="24px" height="24px" viewBox="0 0 24 24">
+                                <Button color="primary" onClick={this.hideContactDialog} className="contact-option" variant="text"><a href="mailto:yonatha12345678910@gmail.com"><span className="material-icons">mail</span>&nbsp;&nbsp;Contact via email</a> </Button>
+                                <Button variant="text" color="primary" onClick={this.hideContactDialog} className="contact-option"><a href="https://github.com/Yonathan-Ashebir"><svg width="24px" height="24px" viewBox="0 0 24 24">
                                     <path d="M7,12 L14.5,12 C16.277025,12 17.7447372,10.6756742 17.970024,8.96013518 C16.2885152,8.7047201 15,7.25283448 15,5.5 C15,3.56700338 16.5670034,2 18.5,2 C20.4329966,2 22,3.56700338 22,5.5 C22,7.27155475 20.6838151,8.73569805 18.9759671,8.96790818 C18.7419236,11.2333126 16.8272778,13 14.5,13 L7,13 L7,15.0354444 C8.69614707,15.2780593 10,16.736764 10,18.5 C10,20.4329966 8.43299662,22 6.5,22 C4.56700338,22 3,20.4329966 3,18.5 C3,16.736764 4.30385293,15.2780593 6,15.0354444 L6,8.96455557 C4.30385293,8.72194074 3,7.26323595 3,5.5 C3,3.56700338 4.56700338,2 6.5,2 C8.43299662,2 10,3.56700338 10,5.5 C10,7.26323595 8.69614707,8.72194074 7,8.96455557 L7,12 Z M4,18.5 C4,19.8807119 5.11928813,21 6.5,21 C7.88071187,21 9,19.8807119 9,18.5 C9,17.1192881 7.88071187,16 6.5,16 C5.11928813,16 4,17.1192881 4,18.5 Z M4,5.5 C4,6.88071187 5.11928813,8 6.5,8 C7.88071187,8 9,6.88071187 9,5.5 C9,4.11928813 7.88071187,3 6.5,3 C5.11928813,3 4,4.11928813 4,5.5 Z M18.5,3 C17.1192881,3 16,4.11928813 16,5.5 C16,6.88071187 17.1192881,8 18.5,8 C19.8807119,8 21,6.88071187 21,5.5 C21,4.11928813 19.8807119,3 18.5,3 Z" />
                                 </svg>&nbsp;&nbsp;Follow on github</a></Button>
                             </ul>
@@ -185,4 +184,4 @@ import {} from "styled-components"
 /* rgba(0,0,255,119) =blue
 rgba(255,0,0,119)=red */
 
-export default connect(mapStoreToProp,mapDispatchToProp)(Home)
+export default connect(mapStoreToProp, mapDispatchToProp)(Home)

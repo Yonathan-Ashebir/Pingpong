@@ -50,7 +50,6 @@ export function SmallCounter(props) {
             anim.complete = completeFunc
         }
     })
-    //todo: props are inheritable but targets are not!
     return counter;
 }
 

@@ -17,7 +17,6 @@ export function FadeCarousel(props) {
         else ind = (index >= props.children.length - 1) ? 0 : (index < 0) ? 0 : index + 1;
         setIndex(ind)
     }
-    console.log("setTimeout invokded")
     useEffect(()=>{
         if(firstTime){
             setFirstTime(false)

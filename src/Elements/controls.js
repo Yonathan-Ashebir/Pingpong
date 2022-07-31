@@ -1,4 +1,5 @@
 import { Button, CircularProgress, LinearProgress } from "@mui/material";
+import { linearProgressClasses } from "@mui/material";
 import anime from "animejs";
 import $ from "jquery";
 import React from "react";
@@ -34,12 +35,21 @@ class Controls extends React.Component {
                     ) : (this.props.gameType === gameTypes.LEAD_BY) ? (
                         <>
                             <GameTimer />
-                            <LinearProgress variant={(score.blue === score.red) ? "indeterminate" : "determinate"} color={(score.blue > score.red) ? "primary" : "warning"} value={(Math.abs(score.blue - score.red) / score.target) * 100} about="both" sx={
+                            <LinearProgress variant={(score.blue === score.red) ? "indeterminate" : "determinate"} value={(Math.abs(score.blue - score.red) / score.target) * 100} about="both" sx={
                                 {
+                                    [`&.${linearProgressClasses.colorPrimary}`]: {
+                                        backgroundColor: "white"
+                                    },
+                                    [`& .${linearProgressClasses.bar}`]: {
+                                        borderRadius: '10px',
+                                        backgroundColor: (score.blue === score.red) ? "gray" : (score.blue > score.red) ? "blue" : "red"
+
+                                    },
+
                                     height: '20px',
                                     width: '50%',
                                     borderRadius: '10px',
-                                }}></LinearProgress> imp:
+                                }}></LinearProgress>
                         </>
 
                     ) : (
@@ -63,13 +73,12 @@ class Controls extends React.Component {
     componentDidUpdate() {
         if (this.props.store?.status === gameStates.roundStarting) {
             this._showAndHide();
-        }
-        if (this.props.store?.status === gameStates.resuming) {
+        } else if (this.props.store?.status === gameStates.pausing || this.props.store?.status === gameStates.paused) {
+            this._show();
+        } else if (this.props.store?.status !== gameStates.roundStarted) {
             this._hide();
         }
-        if (this.props.store?.status === gameStates.pausing) {
-            this._show();
-        }
+
     }
 
     toggle = () => {
@@ -134,7 +143,7 @@ class _GameTimer extends React.Component {
         return (
             <Button variant="text" color="info" onClick={untrackedGameData.game.pauseGame} id="game-timer-container">
                 <span id="game-timer" style={{ position: "relative", height: "fit-content" }} className={status === gameStates.roundStarted ? "active" : ""}>
-                    <span className={this.state.timeClassName} style={{ transition:"color 300ms ",fontSize: "6mm" ,color:(this.props.gameType===gameTypes.TIME_OUT&&this.state.time<=10)?"red":""}}>{this.state.time}</span>
+                    <span className={this.state.timeClassName} style={{ transition: "color 300ms ", fontSize: "6mm", color: (this.props.gameType === gameTypes.TIME_OUT && this.state.time <= 10) ? "red" : "" }}>{this.state.time}</span>
                     <span className={this.state.pauseClassName + " centered material-icons"} style={{ fontSize: "12mm" }}>pause_circle</span>
                 </span>
             </Button>

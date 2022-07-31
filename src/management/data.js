@@ -9,7 +9,7 @@ export const gameTypes = { SCORE: 0, LEAD_BY: 1, TIME_OUT: 2 }, DEFAULT_DIFFICUL
 
 //runtime constants1
 export const DEFAULT_RACKET_LENGTH = 75.6, DEFAULT_RACKET_THICKNESS = 30.2, DEFAULT_BALL_RADIUS = 15.1, DEFAULT_BALL_TRANSFORM = "translate(-50%,-50%) ",
-    DEFAUlT_GAME_STARTED_MESSAGE = <span style={{ color: "darkgreen", fontWeight: 700, fontFamily: "cursive", fontSize: "20vw" }}>GO!</span>;
+    DEFAUlT_GAME_STARTED_MESSAGE = <span style={{ color: "darkgreen", fontWeight: 700, fontFamily: "Graduate", fontSize: "20vw" }}>GO!</span>;
 
 
 export const Player = React.createContext(null)
@@ -48,8 +48,9 @@ export function getStore() {
 export const untrackedGameData = {
 
 };
+window.untrackedGameData = untrackedGameData
 //preference getters
-export function getInitialVelocity() {//todo: relate with prefs
+export function getInitialVelocity() {
     let maxV = new Vector(0.2, 0.2);
     let minV = new Vector(0.1, 0.1);
     let change = (maxV.getR() - minV.getR()) * getDifficulty() / 5;
@@ -58,8 +59,8 @@ export function getInitialVelocity() {//todo: relate with prefs
 }
 export function getGameType() {
     console.log("to return gameType")
-    let type = window.preferences.getInt("game-type");
-    if (type < 0 || type > 2) {
+    let type = window.preferences.getInteger("game_type");
+    if (!(type >= 0 && type <= 2)) {
         type = gameTypes.SCORE
         setGameType(type)
     };
@@ -69,7 +70,7 @@ export function getAppreciationMessage() {
     return "Nice Game!"
 }
 export function getTargetScore() {
-    let target = window.preferences.getInt("target-score");
+    let target = window.preferences.getInteger("target_score");
     if (!getAllowedTargetScores().includes(target)) {
         target = 5
         setTargetScore(target)
@@ -77,7 +78,7 @@ export function getTargetScore() {
     return target
 }
 export function getTargetLead() {
-    let target = window.preferences.getInt("target-lead");
+    let target = window.preferences.getInteger("target_lead");
     if (!getAllowedTargetLeads().includes(target)) {
         target = 3
         setTargetLead(target)
@@ -85,7 +86,7 @@ export function getTargetLead() {
     return target
 }
 export function getGameDurationSeconds() {
-    let duration = window.preferences.getInt("game-duration");
+    let duration = window.preferences.getInteger("game_duration");
     if (!getAllowedGameDurationsSeconds().includes(duration)) {
         duration = 60
         setGameDurationSeconds(duration)
@@ -100,15 +101,17 @@ export function getMaximumVelocity() {
     let minV = getInitialVelocity();
     let change = (maxV.getR() - minV.getR()) * getDifficulty() / 5;
     console.log("to return max velocity")
-    return minV.setR(minV.getR() + change);
+    return minV.setR(minV.getR() + change/2);
 }
 export function getVelocityRefreshTimeSeconds() {
     return 10;
 }
 export function getDifficulty() {
     let gameType = getGameType()
-    let suffix = (gameType == gameTypes.TIME_OUT) ? "time-out" : (gameType === gameTypes.LEAD_BY) ? "lead-by" : "score";
-    return window.preferences.getString("difficulty-" + suffix)
+    let suffix = (gameType == gameTypes.TIME_OUT) ? "time_out" : (gameType === gameTypes.LEAD_BY) ? "lead_by" : "score";
+    let dif =  window.preferences.getInteger("difficulty_" + suffix);
+    if(dif>=1&&dif<=5)return dif;
+    return 2;
 }
 export function getAllowedTargetLeads() {
     return [2, 3, 4, 5]
@@ -149,15 +152,15 @@ export function getAllowed() {
 //preference setters 
 export function setGameType(type) {
     if (type !== gameTypes.SCORE && type !== gameTypes.LEAD_BY && type !== gameTypes.TIME_OUT) throw new Error("Illegal argument(s) error")
-    window.preferences.setInt("game-type", type)
+    window.preferences.setInteger("game_type", type)
     console.log("game type set: " + type)
 }
 export function setDifficulty(level) {
     level = Math.round(level)
     if (level < 1 || level > 5) throw new Error("Illegal argument(s) error")
     let gameType = getGameType()
-    let suffix = (gameType == gameTypes.TIME_OUT) ? "time-out" : (gameType === gameTypes.LEAD_BY) ? "lead-by" : "score";
-    window.preferences.setInt("difficulty-" + suffix, level)
+    let suffix = (gameType == gameTypes.TIME_OUT) ? "time_out" : (gameType === gameTypes.LEAD_BY) ? "lead_by" : "score";
+    window.preferences.setInteger("difficulty_" + suffix, level)
     console.log("difficulty set: " + level)
 
 }
@@ -179,17 +182,17 @@ export function contact() {
 }
 export function setGameDurationSeconds(duration) {
     if (!getAllowedGameDurationsSeconds().includes(duration)) throw new Error("Illegal argument(s) error")
-    window.preferences.setInt("game-duration", duration);
+    window.preferences.setInteger("game_duration", duration);
     console.log("target duration set: " + duration)
 }
 export function setTargetScore(score) {
     if (!getAllowedTargetScores().includes(score)) throw new Error("Illegal argument(s) error")
-    window.preferences.setInt("target-score", score);
+    window.preferences.setInteger("target_score", score);
     console.log("target score set: " + score)
 }
 export function setTargetLead(lead) {
     if (!getAllowedTargetLeads().includes(lead)) throw new Error("Illegal argument(s) error")
-    window.preferences.setInt("target-lead", lead);
+    window.preferences.setInteger("target_lead", lead);
     console.log("target lead set: " + lead)
 }
 

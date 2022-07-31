@@ -20,8 +20,7 @@ class Game extends React.Component {
     }
 
     render() {
-        console.log("at game render method: ", this.props.store?.status)
-        // setTimeout(() => { window.mStore = this.props.store; window.untracked = untrackedGameData }, 100) //todo
+        console.log("game rerendered with store: ", this.props.store)
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
         if (status === "exiting") return (<Navigate to="../"></Navigate>)
         let scoreDisplay, buttons;
@@ -67,7 +66,7 @@ class Game extends React.Component {
         document.body.onresize = this.trackGroundSize;
     }
     componentDidUpdate() {
-        if(this.props.store?.status===gameStates.gameStarting)this.startRound();
+        if (this.props.store?.status === gameStates.gameStarting) this.startRound();
     }
     gameFinished = () => {
         let { score } = this.props.store
@@ -82,7 +81,6 @@ class Game extends React.Component {
         if (!(this.props.store.status === gameStates.launched)) return;
         let target = (this.props.gameType === gameTypes.SCORE) ? getTargetScore() : (this.props.gameType === gameTypes.LEAD_BY) ? getTargetLead() : null;
         this.props.dispatch({ type: "share", payload: { status: gameStates.gameStarting, gameStartTime: new Date().getTime(), score: { blue: 0, red: 0, target: target }, gameTotalDurationSeconds: (this.props.gameType === gameTypes.TIME_OUT) ? getGameDurationSeconds() : getMaximumDurationSeconds() } });
-        console.log(this.props.store.status)
         setTimeout(this.monitor, 100);
     }
 
@@ -92,9 +90,12 @@ class Game extends React.Component {
         let gameTime = currentTime - this.props.store.gameStartTime;
         let roundTime = currentTime - this.props.store.roundStartTime;
         this.props.dispatch({ type: "share", payload: { gameTime: gameTime, roundTime: roundTime, status: gameStates.pausing, gameStartTime: undefined, roundStartTime: undefined } })
-        Promise.resolve().then(() => this.props.dispatch({ type: "share", payload: { status: gameStates.paused } })).then(()=>this.props.saveState())
+        Promise.resolve().then(() => this.props.dispatch({ type: "share", payload: { status: gameStates.paused } }))
+        let status = this.props.store.status
+        Promise.resolve().then(() => Promise.resolve().then(() => this.props.saveState()))
+
     }
-     
+
     resumeGame = () => {
         if (!(this.props.store.status === gameStates.paused)) return;
         let currentTime = new Date().getTime()
@@ -102,31 +103,34 @@ class Game extends React.Component {
         let roundStartTime = currentTime - this.props.store.roundTime;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();;
         this.props.dispatch({ type: "share", payload: { gameStartTime: gameStartTime, roundStartTime: roundStartTime, gameTime: undefined, roundTime: undefined, status: gameStates.resuming } })
-        setTimeout(() => { this.props.dispatch({ type: "share", payload: { gameTimeBeforePause: null, status: gameStates.roundStarted } }); setTimeout(this.monitor, 100) }, 10);
-
+        Promise.resolve().then(() => {
+            this.props.dispatch({ type: "share", payload: {  status: gameStates.roundStarted } });
+            Promise.resolve().then(() => this.monitor())
+        });
+        this.props.clearState();
     }
 
     exitGame = () => {
-        this.props.dispatch({ type: "share", payload: { status: "exiting" } })
+        this.props.dispatch({ type: "share", payload: { status: "exited",gameTime:0,roundTime:0 ,winnerName:undefined,score:undefined} })
     }
 
     updateScoreAndRestart = (score) => {
-        if(!(score.blue>=0||score.red>=0))throw new Error("Illegal argument(s) error")
-        
+        if (!(score.blue >= 0 || score.red >= 0)) throw new Error("Illegal argument(s) error")
+
         this.props.dispatch({ type: "share", payload: { score: { red: Math.round(score.red), blue: Math.round(score.blue), target: this.props.store.score.target } } });
         this.monitor();
         this.restartRound();
     }
 
     startRound = () => {
-        if (!(this.props.store.status === gameStates.roundStarted||this.props.store.status === gameStates.gameStarting)) return;
+        if (!(this.props.store.status === gameStates.roundStarted || this.props.store.status === gameStates.gameStarting)) return;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();
         this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: gameStates.roundStarting } });
         setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.roundStarted } }), 10);//todo: another buggy react issue
     }
 
     restartRound = () => {
-        if (!(this.props.store.status === gameStates.roundStarted))return;
+        if (!(this.props.store.status === gameStates.roundStarted)) return;
         let { ball } = untrackedGameData;
         ball.stop();
         let startRound = this.startRound;
@@ -136,14 +140,12 @@ class Game extends React.Component {
     monitor = () => {
         if (!(this.props.store.status === gameStates.roundStarted)) return;
         clearTimeout(this.state.monitorId)
-        console.log("monitoring and gameTypes are: ",gameTypes)
         let { score, gameStartTime, gameTotalDurationSeconds, roundStartTime } = this.props.store;
         if (new Date().getTime() - gameStartTime >= gameTotalDurationSeconds * 1000) {
             this.gameFinished(); return;
         }
 
         let currentMonitorTimeSeconds = Math.round((new Date().getTime() - roundStartTime) / 1000);
-        console.log("current time seconds: ", currentMonitorTimeSeconds)
         let progress;
         let refreshTime = getVelocityRefreshTimeSeconds();
         if (this.props.gameType === gameTypes.SCORE) {
@@ -167,7 +169,6 @@ class Game extends React.Component {
             let vRange = maxV.getR() - initV.getR();
             let maxVR = initV.getR() + (0.6 + 0.2 * progress + 0.2 * Math.random()) * vRange;
             let vR = (currentMonitorTimeSeconds ** 1.2 / 60 ** 1.2) * (maxVR - initV.getR()) + initV.getR();
-            console.log("vR: ", vR, "maxVR:", maxV.getR())
             untrackedGameData.ball.getVelocity().setR(vR)
 
         }

@@ -1,7 +1,8 @@
+import { positions } from "@mui/system";
 import anime from "animejs";
 import $ from "jquery";
 import React from "react";
-import { connect } from "react-redux"; 
+import { connect } from "react-redux";
 import { } from "redux";
 import toPX from "to-px";
 import { Vector } from "y-lib/LayoutBasics";
@@ -11,8 +12,9 @@ import { gameStates } from "../management/game";
 class Ball extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { shouldMove: false, radius: DEFAULT_BALL_RADIUS, velocity: new Vector(), defaultX: undefined, defaultY: undefined, lastTimePositioned: -1 }
+        this.state = { posX: 0, posY: 0, shouldMove: false, radius: DEFAULT_BALL_RADIUS, defaultX: undefined, defaultY: undefined, lastTimePositioned: -1 }
         untrackedGameData.ball = this;
+        this.velocity = new Vector();
     }
     render() {
         let radiusMM = this.state.radius / toPX('mm')
@@ -35,26 +37,31 @@ class Ball extends React.Component {
             } case gameStates.pausing: {
                 this.stop(); break
             } case gameStates.resuming: {
-                this.state.lastTimePositioned = new Date().getTime() + 10;//todo: correction
-                this.move(); break
+                setTimeout(() => this.move(), 500);
+                break
             }
             case gameStates.finished: {
                 this.stop();
                 break;
             }
         }
+        this.show();
         this.rescalePosition();
     }
+    componentDidMount() {
+        let { groundDimensions } = this.props.store
+        this.state.defaultX = groundDimensions.width / 2; this.state.defaultY = groundDimensions.height / 2;
+    }
     setVelocity = (velocity) => {
-        this.state.velocity.setX(velocity.getX());
-        this.state.velocity.setY(velocity.getY())
+        this.velocity = velocity;
     }
     getVelocity = () => {
-        return this.state.velocity
+        return this.velocity;
     }
     setCenter = (x, y) => {
         if (typeof x == "number") this.state.posX = x;
-        if (typeof y == "number") this.state.posY = y
+        if (typeof y == "number") this.state.posY = y;
+        this.position();
     }
     resetPosition = () => {
         if (this.element && this.props.store.groundDimensions) {
@@ -63,7 +70,6 @@ class Ball extends React.Component {
             this.setCenter(groundDimensions.width / 2, groundDimensions.height / 2);
             this.state.defaultX = this.state.posX; this.state.defaultY = this.state.posY;
             this.setCenter(this.state.defaultX, this.state.defaultY);
-            $element.css("top", "0px").css("left", "0px");
             this.position()
         }
     }
@@ -76,6 +82,7 @@ class Ball extends React.Component {
             this.state.defaultY *= fy;
             this.state.posX *= fx;
             this.state.posY *= fy;
+            this.position()
         }
     }
     getCenter = () => {
@@ -98,21 +105,21 @@ class Ball extends React.Component {
     motionLoop = () => {
         if (!this.state.shouldMove) return;
         let newTime = new Date().getTime(), interval = newTime - this.state.lastTimePositioned;
-        this.state.posX = this.state.posX + this.state.velocity.getX() * interval;
-        this.state.posY = this.state.posY + this.state.velocity.getY() * interval;
+        this.state.posX = this.state.posX + this.velocity.getX() * interval;
+        this.state.posY = this.state.posY + this.velocity.getY() * interval;
         this.position();
         this.state.lastTimePositioned = newTime;
         untrackedGameData.game.checkBall(this)
         requestAnimationFrame(this.motionLoop)
     }
-    position = () => {
+    position = () => {//weird bug
         this.element.style.transform = "translate(" + (this.state.posX - this.getRadius()) + "px, " + (this.state.posY - this.getRadius()) + "px)"
     }
     hide = (onComplete) => {
-        anime({ targets: this.element, scale: { duration: 300, value: [1, 0.3], easing: "easeOutQuad" }, opacity: { duration: 200, delay: 200, value: [1, 0] } }).complete = onComplete;
+        anime({ targets: this.element, scale: { duration: 300, value: 0.3, easing: "easeOutQuad" }, opacity: { duration: 200, delay: 100, value: 0 } }).complete = onComplete;
     }
     show = (onComplete) => {
-        anime({ targets: this.element, scale: { duration: 300, value: [0.3, 1], easing: "easeOutQuad", delay: 100 }, opacity: { duration: 200, value: [0, 1] } }).complete = onComplete;
+        anime({ targets: this.element, scale: { duration: 300, value: 1, easing: "easeOutQuad", delay: 100 }, opacity: { duration: 200, value: 1 } }).complete = onComplete;
     }
 
 }

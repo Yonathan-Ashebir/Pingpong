@@ -1,10 +1,9 @@
-
 #home {
     display: flex;
     flex-flow: column nowrap;
     height: 100%;
     width: 100%;
-    background-image: linear-gradient(120deg,rgba(255,0,0,77),rgba(0,0,255,77));
+    background-image: linear-gradient(120deg, rgba(255, 0, 0, 77), rgba(0, 0, 255, 77));
 }
 
 #home>#main {
@@ -66,7 +65,7 @@
 
 #game-type-card #game-type-detail {
     overflow: hidden;
-    padding: 0mm 2mm;
+    margin: 0;
     box-sizing: border-box;
     color: gray;
     width: 100%;
@@ -86,16 +85,25 @@
     display: block;
     letter-spacing: 0.3ex;
     width: 100%;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    padding-left: 4mm;
+    padding-top:2mm;
+    box-sizing:border-box;
 }
 
 .game-detail-content {
+    margin:0;
     font-size: 0.8em;
     font-family: emoji;
     padding-top: 2mm;
     padding-bottom: 2mm;
-
+    padding-top: 2mm;
+    padding-bottom: 3mm;
+    padding-left: 6mm;
+    padding-right: 2mm;
     letter-spacing: 0.1ex;
     width: 100%;
+    box-sizing:border-box;
 }
 
 .count-selector {
@@ -165,12 +173,15 @@ span#difficulty-label {
     display: flex;
     text-align: center;
     align-items: center;
-    color:#555555;
+    color: #555555;
 }
 
-.contact-list>.contact-option>a {
+.contact-list>.contact-option a {
     display: inherit;
     justify-content: space-between;
+    color: inherit;
+    text-decoration: none;
+    font-size: inherit;
 }
 
 
@@ -219,5 +230,3 @@ ul.contact-list {
     opacity: 0;
     max-height: 0;
 }
-
-

@@ -19,7 +19,8 @@
         opacity: 1;
     }
 }
-@keyframes winner-name-anim{
+
+@keyframes winner-name-anim {
     65% {
         transform: scale(1.6);
         opacity: 0.87;
@@ -63,8 +64,8 @@ body {
 #ball {
     position: absolute;
     box-shadow: 1mm 1mm 3mm rgba(0, 0, 0, 0.1), -2px -2px 10px #33333355;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
     transform: translate(-50%, -50%);
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.133);
@@ -98,6 +99,7 @@ body {
 
 .racket.visible {
     opacity: 1;
+    transform: scale(1);
 }
 
 #controls {
@@ -155,7 +157,8 @@ body {
     margin: 0px;
     padding: 0px;
 }
-#game-timer-container{
+
+#game-timer-container {
     height: fit-content;
     width: fit-content;
     padding: 0;
@@ -171,7 +174,7 @@ body {
     color: #555555;
 }
 
-#game-timer>*{
+#game-timer>* {
     opacity: 0;
     transition: opacity 200ms;
 }
@@ -191,12 +194,13 @@ body {
     padding-left: calc(2mm + 5vw + 1cm);
 }
 
-.suspend-dialog >button {
+.suspend-dialog>button {
     color: blue;
     background-color: aliceblue;
     margin: 5mm;
     box-shadow: #77222222 2px 2px 5px, #77222222 -2px -2px 5px;
 }
+
 .suspend-dialog>button+button {
     color: orange;
     background-color: aliceblue;
@@ -236,12 +240,13 @@ body {
     align-items: center;
 }
 
-.score-label{
-    margin:2mm 0 2mm 4mm;
-    color:silver;
+.score-label {
+    margin: 2mm 0 2mm 4mm;
+    color: silver;
 }
-.winner-name{
-    animation:winner-name-anim 1000ms ease-out 100ms 2;
+
+.winner-name {
+    animation: winner-name-anim 1000ms ease-out 100ms 2;
     font-family: Graduate;
     font-weight: 700;
     font-size: 20vw;

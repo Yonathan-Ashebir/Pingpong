@@ -40,7 +40,6 @@ class Racket extends React.Component {
         if (ball.getRadius() + this.state.thick / 2 >= s.getR() - 2) {
             let v = ball.getVelocity()
             v.resetComponent(s, 1);
-            //todo: modify position
         }
     }
     setLength = (len) => {
@@ -81,7 +80,6 @@ class Racket extends React.Component {
 
         //Assertion: from now on touch is active with status move or start
         let { pageX, pageY } = this.state.touch;
-        //  if(ev.type=="touchmove")ev.preventDefault();//todo
         this.setPosition(pageX - this.element.offsetWidth / 2, pageY - this.element.offsetHeight / 2)
         
 
@@ -121,8 +119,8 @@ class Racket extends React.Component {
     position = () => {
         let bound = this.state.bound
         let pos = getCoordinates(this.element, { x: this.state.posX, y: this.state.posY, bound: bound })
-        this.element.style.transform = "translate(" + (pos.x - bound.left) + "px, " + (pos.y - bound.top) + "px) scale("+(this.state.visible?1:0.7)+")"
-
+        this.element.style.left = pos.x - bound.left + "px"
+        this.element.style.top = pos.y - bound.top + "px"
         let r = this.state.thick / 2
         if (!this.lineSegment) {
             this.lineSegment = new LineSegment(new Point(pos.x + r, pos.y + r), new Point(pos.x + this.state.length - r, pos.y + r))

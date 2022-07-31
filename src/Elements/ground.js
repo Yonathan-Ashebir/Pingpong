@@ -29,9 +29,7 @@ class Ground extends React.Component {
                 </FullScreenDialog>
             </div>)
     }
-    componentDidMount() {
-        this.element.onresize = untrackedGameData.game.trackGroundSize
-    }
+
 
     checkBall = (ball) => {
         let rect = this.props.store.groundDimensions;

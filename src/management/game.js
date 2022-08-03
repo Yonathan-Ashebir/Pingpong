@@ -10,7 +10,7 @@ import TwoFactionsBar from "../Elements/twoFactionsBar";
 import { WinnerDialog } from "../Elements/winnerDialog";
 import { DEFAUlT_GAME_STARTED_MESSAGE, gameTypes, getAppreciationMessage, getGameDurationSeconds, getInitialVelocity, getMaximumDurationSeconds, getMaximumVelocity, getTargetLead, getTargetScore, getVelocityRefreshTimeSeconds, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "./data";
 
-export const gameStates = { launched: 0, gameStarting: 1, roundStarting: 2, roundStarted: 3, pausing: 4, paused: 5, resuming: 6, finished: 7,exited:8 }
+export const gameStates = { launched: 0, gameStarting: 1, roundStarting: 2, roundStarted: 3, pausing: 4, paused: 5, resuming: 6, finished: 7 }
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class Game extends React.Component {
 
     render() {
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
-        if (status === gameStates.exited) return (<Navigate to="../"></Navigate>)
+        if (status === "exiting") return (<Navigate to="../"></Navigate>)
         let scoreDisplay, buttons;
         if (status === gameStates.finished) {
             let countDoneStyle = {
@@ -109,8 +109,7 @@ class Game extends React.Component {
     }
 
     exitGame = () => {
-        this.props.dispatch({ type: "share", payload: { status: gameStates.exited,gameTime:0,roundTime:0 ,winnerName:undefined,score:undefined} });
-        this.props.clearState();
+        this.props.dispatch({ type: "share", payload: { status: "exited",gameTime:0,roundTime:0 ,winnerName:undefined,score:undefined} })
     }
 
     updateScoreAndRestart = (score) => {
@@ -169,7 +168,7 @@ class Game extends React.Component {
             let maxVR = initV.getR() + (0.6 + 0.2 * progress + 0.2 * Math.random()) * vRange;
             let vR = (currentMonitorTimeSeconds ** 1.2 / 60 ** 1.2) * (maxVR - initV.getR()) + initV.getR();
             untrackedGameData.ball.getVelocity().setR(vR)
-            console.log("maxV: ",maxV," bT: ",maxVR," aT: ",vR)
+
         }
         this.state.monitorId = setTimeout(this.monitor, 800);
     }

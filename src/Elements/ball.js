@@ -34,10 +34,12 @@ class Ball extends React.Component {
                 v.rotate(rad + Math.sign(rad) * (0.6))
                 this.setVelocity(v)
                 this.move(); break
+                this.show();
             } case gameStates.pausing: {
                 this.stop(); break
             } case gameStates.resuming: {
                 setTimeout(() => this.move(), 500);
+                this.show();
                 break
             }
             case gameStates.finished: {
@@ -45,12 +47,9 @@ class Ball extends React.Component {
                 break;
             }
         }
-        this.show();
-        this.rescalePosition();
+        this.adjustPosition();
     }
     componentDidMount() {
-        let { groundDimensions } = this.props.store
-        this.state.defaultX = groundDimensions.width / 2; this.state.defaultY = groundDimensions.height / 2;
     }
     setVelocity = (velocity) => {
         this.velocity = velocity;
@@ -64,24 +63,27 @@ class Ball extends React.Component {
         this.position();
     }
     resetPosition = () => {
-        if (this.element && this.props.store.groundDimensions) {
-            let $element = $(this.element)
-            let { groundDimensions } = this.props.store
-            this.setCenter(groundDimensions.width / 2, groundDimensions.height / 2);
-            this.state.defaultX = this.state.posX; this.state.defaultY = this.state.posY;
-            this.setCenter(this.state.defaultX, this.state.defaultY);
-            this.position()
-        }
+        let { groundDimensions } = this.props.store
+        this.setCenter(groundDimensions.width / 2, groundDimensions.height / 2);
+        this.state.defaultX = this.state.posX; this.state.defaultY = this.state.posY;
+        this.setCenter(this.state.defaultX, this.state.defaultY);
+
     }
-    rescalePosition = () => {
-        if (this.props.store.groundDimensions) {
-            let dimen = this.props.store.groundDimensions
-            let fx = dimen.width / 2 / this.state.defaultX
-            let fy = dimen.height / 2 / this.state.defaultY
-            this.state.defaultX *= fx;
-            this.state.defaultY *= fy;
-            this.state.posX *= fx;
-            this.state.posY *= fy;
+    adjustPosition = () => {
+        if (this.props.store?.groundDimensions) {
+            let dimen = this.props.store.groundDimensions;
+
+            if (this.state.defaultX && this.state.defaultY) {
+                let fx = dimen.width / 2 / this.state.defaultX
+                let fy = dimen.height / 2 / this.state.defaultY
+                this.state.posX *= fx;
+                this.state.posY *= fy;
+                this.state.defaultX = dimen.width / 2;
+                this.state.defaultY = dimen.height / 2;
+            } else {
+                this.resetPosition();
+            }
+
             this.position()
         }
     }

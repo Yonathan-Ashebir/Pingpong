@@ -25,14 +25,14 @@ class Home extends React.Component {
 
     }
     render() {
-        if (this.state.status === "entering game") {
+        if (this.state.status === "entering_game" && this.props.store?.status !== gameStates.launched) {
             this.props.dispatch({ type: "share", payload: { status: gameStates.launched } });
             return <Navigate to="./game"></Navigate>
         }
         return (
             <div style={{ backgroundImage: "linear-gradient(120deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))" }} id="home" ref={((el => { this.element = el; window.home = el }).bind(this))}>
                 <Stack spacing={3} alignItems="center" id="main">
-                    <Button variant="text" onClick={() => { this.setState({ status: "entering game" }) }}>
+                    <Button variant="text" onClick={() => { this.setState({ status: "entering_game" }) }}>
                         <FadeCarousel random={false}>
                             <Stack spacing={3} alignItems="center" >
                                 <div id="logo">

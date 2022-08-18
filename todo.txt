@@ -1,9 +1,2 @@
-- Home component height fix -done
-- Controls show/hide animation fix -done
-- Version/contact bar layout fix -done
-- Handled routing to App component -done
-- Made Ball component self contained in respect to restoring saved state -done
-- Applied state change tracking to components for change in store -done
-- Other optimizations to different components -done
-- Preferences fix
-- Added /todo.txt -done
+- Fix ball state saving -done
+- Fix path saving -done

@@ -14,6 +14,17 @@ class Ball extends React.Component {
         this.velocity = new Vector();
         this.untrackedData = { roundCount: -1, restoredStateCode: -1, shouldMove: false, posX: 0, posY: 0, defaultX: 0, defaultY: 0, lastTimePositioned: -1 };
         untrackedGameData.ball = this;
+        let data = window.preferences.getString("ball_data")
+        if (typeof data === "string" && data.length > 0) {
+            data = JSON.parse(data)
+            this.untrackedData = data.untrackedData;
+            this.setState(data.state, () => {
+                this.setVelocity(new Vector(data.vx, data.vy)) //restoring non state value
+                this.adjustPosition()
+                window.preferences.setString("ball_data", "")
+            });
+            this.untrackedData.restoredStateCode = this.props.store?.restoredStateCode
+        }
     }
     render() {
         this.adjustPosition();
@@ -25,18 +36,7 @@ class Ball extends React.Component {
         )
     }
     componentDidUpdate() {
-        if (this.props.store?.restoredStateCode && this.props.store?.restoredStateCode !== this.untrackedData.restoredStateCode) {
-            let data = window.preferences?.getString("ball_data")
-            if (typeof data === "string" && data.length > 0) {
-                this.untrackedData = data.untrackedData;
-                this.setState(data.state, () => {
-                    this.setVelocity(new Vector(data.vx, data.vy)) //restoring non state value
-                    this.rescalePosition()
-                    window.preferences?.setString("ball_data", "")
-                });
-            }
-            this.untrackedData.restoredStateCode = this.props.store?.restoredStateCode
-        }
+
         if (this.untrackedData.state !== this.props.store?.status || this.untrackedData.roundCount !== this.props.store?.roundCount) {
             switch (this.props.store?.status) {
                 case gameStates.roundStarted: {
@@ -62,7 +62,7 @@ class Ball extends React.Component {
                     /* saving none state values */
                     data.vx = this.getVelocity().getX();
                     data.vy = this.getVelocity().getY();
-                    window.preferences?.setString("ball_data", JSON.stringify(data))
+                    window.preferences.setString("ball_data", JSON.stringify(data))
                     break;
 
                 }
@@ -79,7 +79,11 @@ class Ball extends React.Component {
     }
     componentDidMount() {
     }
+    componentWillUnmount() {
+      if(this.props.store?.status&&this.props.store.status !== gameStates.paused)window.preferences.setString("ball_data", "");
+    }
     setVelocity = (velocity) => {
+
         this.velocity = velocity;
     }
     getVelocity = () => {

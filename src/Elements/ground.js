@@ -24,7 +24,7 @@ class Ground extends React.Component {
                     <PlayerField position={"bottom"} />
                 </Player.Provider>
                 <Ball></Ball>
-                <FullScreenDialog transitionDuration={400} show={status === gameStates.paused}>
+                <FullScreenDialog transitionInDuration={400} transitionOutDuration={50}show={status === gameStates.paused}>
                     <Suspend />
                 </FullScreenDialog>
             </div>)

@@ -6,12 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import { Router } from 'react-router';
 import { Provider } from 'react-redux'
 import { getStore } from './management/data';
+import { HashRouter } from 'react-router-dom';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render
       (<Provider store={getStore()} >
-            <App />
+            <HashRouter>
+                  <App />
+            </HashRouter>
       </Provider>
 
       );

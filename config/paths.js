@@ -21,7 +21,8 @@ const publicUrlOrPath = getPublicUrlOrPath(
   process.env.PUBLIC_URL
 );
 
-const buildPath = process.env.BUILD_PATH || "D:/Shared/AndroidStudioProjects/pingpong/app/src/main/assets"// 'build';
+const buildPath = process.env.BUILD_PATH || "../../AndroidStudioProjects/pingpong/app/src/main/assets/"//"D:/Shared/AndroidStudioProjects/pingpong/app/src/main/assets" 
+
 
 const moduleFileExtensions = [
   'web.mjs',

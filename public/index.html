@@ -9,16 +9,24 @@
     <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="./logo192.png" />
     <link rel="manifest" href="./manifest.json" />
-    
+
     <!-- <script src="./eruda.min.js"></script> -->
     <!-- <script>eruda.init()</script> -->
     <title>React App</title>
     <script>
-        window.yonstore={};
-        window.preferences = { setString: (k,v) => {yonstore[k]=v }, getInteger:(k) => yonstore[k], setInteger:(k,v) => {yonstore[k]=v}, setLong: (k,v) => {yonstore[k]=v }, setFloat: (k,v) => {yonstore[k]=v }, setBoolean:(k,v) => {yonstore[k]=v }, getString: (k) => yonstore[k], getLong: () =>  yonstore[k], getFloat: () =>  yonstore[k], getBoolean: () => yonstore[k] }
+        // window.yonstore={};
+        window.preferences = { setString: (k, v) => { yonstore[k] = v }, getInteger: (k) => yonstore[k], setInteger: (k, v) => { yonstore[k] = v }, setLong: (k, v) => { yonstore[k] = v }, setFloat: (k, v) => { yonstore[k] = v }, setBoolean: (k, v) => { yonstore[k] = v }, getString: (k) => yonstore[k], getLong: () => yonstore[k], getFloat: () => yonstore[k], getBoolean: () => yonstore[k] }
         window.bridge = { getField: () => { }, invokeMethod: () => { } }
-        window.activity = { finish: () => { console.log("finished") },trackStatus:(int)=>{console.log("app status: ",int)} }
-        // yonstore={saved_state:'{"store":{"groundDimensions":{"x":0,"y":0,"width":366,"height":576,"top":0,"right":366,"bottom":576,"left":0},"status":5,"score":{"red":1,"blue":0,"target":5},"gameTotalDurationSeconds":999,"gameTime":5744,"roundTime":2853,"gameTimeBeforePause":null,"winnerName":"BLUE"},"ballState":{"posX":266.4532254007755,"posY":149.07184695805918,"shouldMove":false,"radius":15.1,"defaultX":183,"defaultY":288,"lastTimePositioned":1659272003930,"velocity":{"vx":0.11164791708524636,"vy":-0.1635076224844761}},"vx":-0.1889757642929605,"vy":0.0633955820050941}'}
+        window.activity = { finish: () => { console.log("finished") }, trackStatus: (int) => { console.log("app status: ", int) } }
+        window.yonstore = {
+            "ball_data": "{\"state\":{\"radius\":15.1},\"untrackedData\":{\"roundCount\":99,\"restoredStateCode\":1,\"shouldMove\":false,\"posX\":227.5341054802541,\"posY\":431.93006607039763,\"defaultX\":177,\"defaultY\":286,\"lastTimePositioned\":1660829806343,\"state\":2},\"vx\":0.0925533067403919,\"vy\":0.26727118327911625}",
+            "difficulty_time_out": 5,
+            "game_data": "{\"path\":\"/game\",\"store\":{\"status\":3,\"groundDimensions\":{\"x\":0,\"y\":0,\"width\":354,\"height\":572,\"top\":0,\"right\":354,\"bottom\":572,\"left\":0},\"score\":{\"red\":0,\"blue\":1,\"target\":null},\"gameTotalDurationSeconds\":120,\"roundCount\":99,\"gameTime\":2492,\"roundTime\":601,\"restoredStateCode\":1}}",
+            "game_duration": 120,
+            "game_type": 2,
+            "target_lead": 3,
+            "target_score": 5
+        }
 
     </script>
     <link rel="stylesheet" href="./material-icons.css">

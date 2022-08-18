@@ -104,6 +104,9 @@ class Game extends React.Component {
         Promise.resolve().then(this.monitor)
         this.props.clearState();
     }
+    componentWillUnmount() {
+        if (this.props.store?.status && this.props.store.status !== gameStates.paused) window.preferences.setString("ball_data", "");
+    }
 
     exitGame = () => {
         this.props.dispatch({ type: "share", payload: { status: gameStates.home, gameTime: 0, roundTime: 0, winnerName: undefined, score: undefined } })

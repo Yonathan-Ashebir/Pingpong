@@ -9,6 +9,7 @@ import "../css/fade-carousel.css";
  ** random - whether to randomize order
    */
 export function FadeCarousel(props) {
+ 
     let [index, setIndex] = useState(props.startIndex ? props.startIndex : props.random ? Math.floor(Math.random() * props.children.length) : 0);
     let [firstTime, setFirstTime] = useState(true);
     let change = () => {

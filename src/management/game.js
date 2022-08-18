@@ -10,7 +10,7 @@ import TwoFactionsBar from "../Elements/twoFactionsBar";
 import { WinnerDialog } from "../Elements/winnerDialog";
 import { DEFAUlT_GAME_STARTED_MESSAGE, gameTypes, getAppreciationMessage, getGameDurationSeconds, getInitialVelocity, getMaximumDurationSeconds, getMaximumVelocity, getTargetLead, getTargetScore, getVelocityRefreshTimeSeconds, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "./data";
 
-export const gameStates = { launched: 0, gameStarting: 1, roundStarting: 2, roundStarted: 3, pausing: 4, paused: 5, resuming: 6, finished: 7 }
+export const gameStates = { launched: 0, gameStarting: 1, roundStarted: 2, paused: 3, finished: 4, home: 5 }
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class Game extends React.Component {
 
     render() {
         let status = this.props.store?.status, winnerName = this.props.store?.winnerName, score = this.props.store?.score
-        if (status === "exiting") return (<Navigate to="../"></Navigate>)
+
         let scoreDisplay, buttons;
         if (status === gameStates.finished) {
             let countDoneStyle = {
@@ -87,29 +87,27 @@ class Game extends React.Component {
         let currentTime = new Date().getTime()
         let gameTime = currentTime - this.props.store.gameStartTime;
         let roundTime = currentTime - this.props.store.roundStartTime;
-        this.props.dispatch({ type: "share", payload: { gameTime: gameTime, roundTime: roundTime, status: gameStates.pausing, gameStartTime: undefined, roundStartTime: undefined } })
-        Promise.resolve().then(() => this.props.dispatch({ type: "share", payload: { status: gameStates.paused } }))
-        let status = this.props.store.status
+        this.props.dispatch({ type: "share", payload: { gameTime: gameTime, roundTime: roundTime, status: gameStates.paused, gameStartTime: undefined, roundStartTime: undefined } })
         Promise.resolve().then(() => Promise.resolve().then(() => this.props.saveState()))
 
     }
 
     resumeGame = () => {
+        let status = this.props.store.status
+
         if (!(this.props.store.status === gameStates.paused)) return;
         let currentTime = new Date().getTime()
         let gameStartTime = currentTime - this.props.store.gameTime;
         let roundStartTime = currentTime - this.props.store.roundTime;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();;
-        this.props.dispatch({ type: "share", payload: { gameStartTime: gameStartTime, roundStartTime: roundStartTime, gameTime: undefined, roundTime: undefined, status: gameStates.resuming } })
-        Promise.resolve().then(() => {
-            this.props.dispatch({ type: "share", payload: {  status: gameStates.roundStarted } });
-            Promise.resolve().then(() => this.monitor())
-        });
+        this.props.dispatch({ type: "share", payload: { gameStartTime: gameStartTime, roundStartTime: roundStartTime, gameTime: undefined, roundTime: undefined, status: gameStates.roundStarted } })
+        Promise.resolve().then(this.monitor)
         this.props.clearState();
     }
 
     exitGame = () => {
-        this.props.dispatch({ type: "share", payload: { status: "exited",gameTime:0,roundTime:0 ,winnerName:undefined,score:undefined} })
+        this.props.dispatch({ type: "share", payload: { status: gameStates.home, gameTime: 0, roundTime: 0, winnerName: undefined, score: undefined } })
+        Promise.resolve().then(() => this.props.navigateAbsoluteTo("/"))
     }
 
     updateScoreAndRestart = (score) => {
@@ -123,8 +121,7 @@ class Game extends React.Component {
     startRound = () => {
         if (!(this.props.store.status === gameStates.roundStarted || this.props.store.status === gameStates.gameStarting)) return;
         this.state.lastMonitorTimeSeconds = -getVelocityRefreshTimeSeconds();
-        this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: gameStates.roundStarting } });
-        setTimeout(() => this.props.dispatch({ type: "share", payload: { status: gameStates.roundStarted } }), 10);
+        this.props.dispatch({ type: "share", payload: { roundStartTime: new Date().getTime(), status: gameStates.roundStarted, roundCount: (Number.isInteger(this.props.store?.roundCount)) ? this.props.store?.roundCount + 1 : 0 } });
     }
 
     restartRound = () => {
@@ -180,7 +177,7 @@ class Game extends React.Component {
         ground.checkBall(ball);
     }
     trackGroundSize = () => {
-        let dimen = untrackedGameData.ground.getDimensions()
+        let dimen = untrackedGameData.ground?.getDimensionsDirectly()
         if (dimen) {
             this.props.dispatch({ type: "share", payload: { groundDimensions: dimen } })
         }

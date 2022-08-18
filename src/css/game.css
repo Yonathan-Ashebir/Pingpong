@@ -117,20 +117,28 @@ body {
     align-items: center;
     justify-content: space-evenly;
     font-size: 8mm;
-    opacity: 0;
+    opacity: 0.8;
     transition: none;
     visibility: hidden;
 }
 
-#controls.shown {
-    transform: translate(-50%, -50%) rotate(270deg) translate(0px, 0px);
-    opacity: 0.9;
-    transition: opacity 300ms, transform 300ms;
+#controls.controls-enter,#controls.controls-appear {
+    transition:  transform 300ms;
     visibility: visible;
 }
 
-#controls.hiding {
-    transition: transform 300ms, opacity 300ms;
+#controls.controls-appear-active,#controls.controls-enter-active,#controls.controls-appear-done,#controls.controls-enter-done{
+    transform: translate(-50%, -50%) rotate(270deg) scale(1);
+    visibility: visible;
+}
+
+#controls.controls-exit{
+    transition: opacity 300ms, transform 300ms;
+    transform: translate(-50%, -50%) rotate(270deg) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+#controls.controls-exit-active{
     transform: translate(-50%, -50%) rotate(270deg) scale(0.7);
     opacity: 0;
     visibility: visible;

@@ -3,9 +3,24 @@
 
 <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="./favicon.ico" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content=" a simple game" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <link rel="apple-touch-icon" href="./logo192.png" />
+    <link rel="manifest" href="./manifest.json" />
+    
+    <!-- <script src="./eruda.min.js"></script> -->
+    <!-- <script>eruda.init()</script> -->
+    <title>React App</title>
+    <script>
+        window.yonstore={};
+        window.preferences = { setString: (k,v) => {yonstore[k]=v }, getInteger:(k) => yonstore[k], setInteger:(k,v) => {yonstore[k]=v}, setLong: (k,v) => {yonstore[k]=v }, setFloat: (k,v) => {yonstore[k]=v }, setBoolean:(k,v) => {yonstore[k]=v }, getString: (k) => yonstore[k], getLong: () =>  yonstore[k], getFloat: () =>  yonstore[k], getBoolean: () => yonstore[k] }
+        window.bridge = { getField: () => { }, invokeMethod: () => { } }
+        window.activity = { finish: () => { console.log("finished") },trackStatus:(int)=>{console.log("app status: ",int)} }
+        // yonstore={saved_state:'{"store":{"groundDimensions":{"x":0,"y":0,"width":366,"height":576,"top":0,"right":366,"bottom":576,"left":0},"status":5,"score":{"red":1,"blue":0,"target":5},"gameTotalDurationSeconds":999,"gameTime":5744,"roundTime":2853,"gameTimeBeforePause":null,"winnerName":"BLUE"},"ballState":{"posX":266.4532254007755,"posY":149.07184695805918,"shouldMove":false,"radius":15.1,"defaultX":183,"defaultY":288,"lastTimePositioned":1659272003930,"velocity":{"vx":0.11164791708524636,"vy":-0.1635076224844761}},"vx":-0.1889757642929605,"vy":0.0633955820050941}'}
 
+    </script>
     <link rel="stylesheet" href="./material-icons.css">
     <style>
         @font-face {
@@ -13,11 +28,10 @@
             src: url(./Graduate-Regular.ttf);
         }
     </style>
-
-    <title>Pingpong</title>
 </head>
 
 <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
 </body>
 

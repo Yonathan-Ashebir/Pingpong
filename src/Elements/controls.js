@@ -4,118 +4,113 @@ import anime from "animejs";
 import $ from "jquery";
 import React from "react";
 import { connect } from "react-redux";
+import { CSSTransition } from "react-transition-group";
 import { gameTypes, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
 import { gameStates } from "../management/game";
 class Controls extends React.Component {
     constructor(props) {
         super(props)
-        untrackedGameData.controls = this;
         this.state = { visible: false, hideTimeoutId: undefined }
+        this.untrackedData = { state: -1, roundCount: -1 };
+        untrackedGameData.controls = this;
     }
     render() {
         let style = {}
         let score = { blue: 0, red: 0, target: 0 }
         if (this.props.store && this.props.store.score) { score = this.props.store.score }
         anime({ targets: this.progress, value: Math.abs(score.blue - score.red) / score.target, duration: 300, easing: "easeOutQuart" })
+
         return (
-            <div style={{}} id="controls" ref={(el) => this.element = el}>
-                {
-                    (this.props.gameType === gameTypes.SCORE) ? (
-                        <>
-                            <div className="scoreDisplay">
-                                <CircularProgress variant="determinate" value={score.blue / score.target * 100} about="player 1" sx={{ color: "blue" }} className="scoreDisplay"></CircularProgress>
-                                <p>{score.blue}</p>
-                            </div>
-                            <GameTimer gameType={this.props.gameType} />
-                            <div className="scoreDisplay">
-                                <CircularProgress variant="determinate" value={score.red / score.target * 100} about="player 2" sx={{ color: "orange" }} className="scoreDisplay"></CircularProgress>
-                                <p>{score.red}</p>
-                            </div>
-                        </>
-                    ) : (this.props.gameType === gameTypes.LEAD_BY) ? (
-                        <>
-                            <GameTimer />
-                            <LinearProgress variant={(score.blue === score.red) ? "indeterminate" : "determinate"} value={(Math.abs(score.blue - score.red) / score.target) * 100} about="both" sx={
-                                {
-                                    [`&.${linearProgressClasses.colorPrimary}`]: {
-                                        backgroundColor: "white"
-                                    },
-                                    [`& .${linearProgressClasses.bar}`]: {
+            <CSSTransition in={this.state.visible} classNames={"controls"} addEndListener={(el, listener) => el.ontransitionend = listener}>
+                <div id="controls" ref={(el) => this.element = el} >
+                    {
+                        (this.props.gameType === gameTypes.SCORE) ? (
+                            <>
+                                <div className="scoreDisplay">
+                                    <CircularProgress variant="determinate" value={score.blue / score.target * 100} about="player 1" sx={{ color: "blue" }} className="scoreDisplay"></CircularProgress>
+                                    <p>{score.blue}</p>
+                                </div>
+                                <GameTimer gameType={this.props.gameType} />
+                                <div className="scoreDisplay">
+                                    <CircularProgress variant="determinate" value={score.red / score.target * 100} about="player 2" sx={{ color: "orange" }} className="scoreDisplay"></CircularProgress>
+                                    <p>{score.red}</p>
+                                </div>
+                            </>
+                        ) : (this.props.gameType === gameTypes.LEAD_BY) ? (
+                            <>
+                                <GameTimer />
+                                <LinearProgress variant={(score.blue === score.red) ? "indeterminate" : "determinate"} value={(Math.abs(score.blue - score.red) / score.target) * 100} about="both" sx={
+                                    {
+                                        [`&.${linearProgressClasses.colorPrimary}`]: {
+                                            backgroundColor: "white"
+                                        },
+                                        [`& .${linearProgressClasses.bar}`]: {
+                                            borderRadius: '10px',
+                                            backgroundColor: (score.blue === score.red) ? "gray" : (score.blue > score.red) ? "blue" : "red"
+
+                                        },
+
+                                        height: '20px',
+                                        width: '50%',
                                         borderRadius: '10px',
-                                        backgroundColor: (score.blue === score.red) ? "gray" : (score.blue > score.red) ? "blue" : "red"
+                                    }}></LinearProgress>
+                            </>
 
-                                    },
+                        ) : (
+                            <>
+                                <div className="scoreDisplay">
+                                    <CircularProgress variant="determinate" value={score.blue / (score.blue + score.red) * 100} about="player 1" sx={{ color: "blue" }} className="scoreDisplay"></CircularProgress>
+                                    <p>{score.blue}</p>
+                                </div>
+                                <GameTimer gameType={this.props.gameType} />
+                                <div className="scoreDisplay">
+                                    <CircularProgress variant="determinate" about="player 2" value={score.red / (score.blue + score.red) * 100} sx={{ color: "orange" }} className="scoreDisplay"></CircularProgress>
+                                    <p>{score.red}</p>
+                                </div>
+                            </>
+                        )
+                    }
 
-                                    height: '20px',
-                                    width: '50%',
-                                    borderRadius: '10px',
-                                }}></LinearProgress>
-                        </>
-
-                    ) : (
-                        <>
-                            <div className="scoreDisplay">
-                                <CircularProgress variant="determinate" value={score.blue / (score.blue + score.red) * 100} about="player 1" sx={{ color: "blue" }} className="scoreDisplay"></CircularProgress>
-                                <p>{score.blue}</p>
-                            </div>
-                            <GameTimer gameType={this.props.gameType} />
-                            <div className="scoreDisplay">
-                                <CircularProgress variant="determinate" about="player 2" value={score.red / (score.blue + score.red) * 100} sx={{ color: "orange" }} className="scoreDisplay"></CircularProgress>
-                                <p>{score.red}</p>
-                            </div>
-                        </>
-                    )
-                }
-
-            </div>
+                </div>
+            </CSSTransition>
         );
     }
     componentDidUpdate() {
-        if (this.props.store?.status === gameStates.roundStarting) {
-            this._showAndHide();
-        } else if (this.props.store?.status === gameStates.pausing || this.props.store?.status === gameStates.paused) {
-            this._show();
-        } else if (this.props.store?.status !== gameStates.roundStarted) {
-            this._hide();
+        if (this.untrackedData.state !== this.props.store?.status) {
+            switch (this.props.store?.status) {
+                case gameStates.paused: this.show();
+            }
         }
-
+        if (this.props.store?.status === gameStates.roundStarted && this.props.store?.roundCount !== this.untrackedData.roundCount) {
+            this.showAndHide();
+        }
+        this.untrackedData.state = this.props.store?.status
+        this.untrackedData.roundCount = this.props.store?.roundCount
     }
 
-    toggle = () => {
+
+
+    //info: toggle() is possible
+    toggleShowAndHide = () => {
         if (this.props.store?.status === gameStates.roundStarted) {
-            this._toggle()
+            if (this.state.visible) this.hide(); else this.showAndHide();
         }
     }
 
-    _showAndHide = () => {
-        if (this.state.hideTimeoutId !== undefined) clearTimeout(this.state.hideTimeoutId)
-        this._show()
-        this.state.hideTimeoutId = setTimeout(this._hide, 2500)
+    showAndHide = () => {//info: no external caller
+        if (this.state.hideTimeoutId || this.state.hideTimeoutId === 0) clearTimeout(this.state.hideTimeoutId)
+        this.setState({ visible: true, hideTimeoutId: setTimeout(this.hide, 2500) })
     }
 
     show = () => {
-        if (this.props.store?.status === gameStates.roundStarted) this._show();
+        if (this.props.store?.status === gameStates.paused) {
+            if (this.state.hideTimeoutId || this.state.hideTimeoutId === 0) clearTimeout(this.state.hideTimeoutId);
+            this.setState({ visible: true })
+        }
     }
 
-    hide = () => {
-        if (this.props.store?.status === gameStates.roundStarted) this._hide();
-    }
-
-
-    _toggle = () => {
-        if (this.state.visible) this.hide(); else this._showAndHide();
-    }
-
-    _show = () => {
-        if (this.state.hideTimeoutId !== undefined) clearTimeout(this.state.hideTimeoutId)
-        $(this.element).removeClass("hiding").addClass("shown")
-        this.state.visible = true;
-    }
-
-    _hide = () => {
-        let $element = $(this.element).removeClass("shown").addClass("hiding")
-        setTimeout((() => { $element.removeClass("hiding") }), 300)
-        this.state.visible = false;
+    hide = () => {//info: No external caller
+        this.setState({ visible: false })
     }
 }
 class _GameTimer extends React.Component {

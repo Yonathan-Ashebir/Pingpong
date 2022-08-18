@@ -2,38 +2,52 @@ import $ from "jquery";
 import React from "react";
 import { connect } from "react-redux";
 import toPX from "to-px";
-import { getCoordinates, LineSegment, Point } from "y-lib/LayoutBasics";
-import { DEFAULT_RACKET_LENGTH, DEFAULT_RACKET_THICKNESS, mapDispatchToProp, mapStoreToProp, Player, untrackedGameData } from "../management/data";
+import { LineSegment, Point } from "y-lib/LayoutBasics";
+import { getCoordinatesFromParameters } from "y-lib/src/js/layout";
+import {
+    DEFAULT_RACKET_LENGTH,
+    DEFAULT_RACKET_THICKNESS,
+    mapDispatchToProp,
+    mapStoreToProp,
+    Player,
+    untrackedGameData
+} from "../management/data";
+
 class Racket extends React.Component {
     static contextType = Player;
+
     constructor(props) {
         super(props);
         this.state = {
             thick: DEFAULT_RACKET_THICKNESS,
-            length: DEFAULT_RACKET_LENGTH,
-            touch: null, 
+            length: DEFAULT_RACKET_LENGTH
+        };
+        this.untrackedData = {
+            touch: null,
             posX: undefined,
             posY: undefined,
             visible: false
-        };
+        }
         untrackedGameData[this.props.position + "Racket"] = this;
     }
 
     render() {
         this.context.racket = this;
-        let style = { height: this.state.thick / toPX('mm') + "mm", width: this.state.length / toPX('mm') + "mm", borderRadius: this.state.thick / toPX('mm') / 2 + "mm" }
-        return (
-            <div className={"racket " + this.props.position} style={style} ref={(el) => { this.element = el }}>
+        let style = {
+            height: this.state.thick / toPX('mm') + "mm",
+            width: this.state.length / toPX('mm') + "mm",
+            borderRadius: this.state.thick / toPX('mm') / 2 + "mm"
+        }
+        return (<div className={"racket " + this.props.position}
+            style={style}
+            ref={(el) => { this.element = el }} >
 
-            </div >
+        </div>
         )
-    }
-    componentDidUpdate() {
-     this.state.bound = this.element.parentElement.getBoundingClientRect()
     }
 
     checkBall = (ball) => {
-        if (!this.state.visible) return
+        if (!this.untrackedData.visible) return
         let pos = ball.getCenter()
         let s = this.lineSegment.to(new Point(pos.x, pos.y))
 
@@ -50,11 +64,11 @@ class Racket extends React.Component {
         this.context.racketThickness = tk;
     }
     setPosition = (x, y) => {
-        if (typeof x === "number") this.state.posX = x;
-        if (typeof y === "number") this.state.posY = y;
+        if (typeof x === "number") this.untrackedData.posX = x;
+        if (typeof y === "number") this.untrackedData.posY = y;
     }
     getPosition = () => {
-        return { x: this.state.posX, y: this.state.posY }
+        return { x: this.untrackedData.posX, y: this.untrackedData.posY }
     }
     getThickness = () => {
         return this.state.thick
@@ -63,35 +77,38 @@ class Racket extends React.Component {
         return this.state.length
     }
     followTouch = (ev) => {
-        if (this.state.touch == null) {
-            this.state.touch = this.selectTouch(ev)
-            if (this.state.touch == null) return;
+        if (this.untrackedData.touch == null) {
+            this.untrackedData.touch = this.selectTouch(ev)
+            if (this.untrackedData.touch == null) return;
             this.show();
             this.motionLoop()
         } else {
-            if ((this.state.touch = this.getTouchWithIdentifier(this.state.touch.identifier, ev.touches)) == null) this.state.touch = this.selectTouch(ev)
-            if (this.state.touch == null) { this.hide(); return }
+            if ((this.untrackedData.touch = this.getTouchWithIdentifier(this.untrackedData.touch.identifier, ev.touches)) == null) this.untrackedData.touch = this.selectTouch(ev)
+            if (this.untrackedData.touch == null) {
+                this.hide();
+                return
+            }
         }
         if (ev.type === "touchend" || ev.type === "touchcancel") {
-            this.state.touch = null;
+            this.untrackedData.touch = null;
             this.hide();
             return
         }
 
         //Assertion: from now on touch is active with status move or start
-        let { pageX, pageY } = this.state.touch;
-        this.setPosition(pageX - this.element.offsetWidth / 2, pageY - this.element.offsetHeight / 2)
-        
+        let { pageX, pageY } = this.untrackedData.touch;
+        this.setPosition(pageX, pageY)
+
 
     }
 
-    show = () => { 
-        this.state.visible = true;
-        $(this.element).addClass("visible")  
+    show = () => {
+        this.untrackedData.visible = true;
+        $(this.element).addClass("visible")
     }
 
     hide = () => {
-        this.state.visible = false;
+        this.untrackedData.visible = false;
         $(this.element).removeClass("visible")
     }
     /* *Selects the best touch. i.e. a touch
@@ -104,21 +121,31 @@ class Racket extends React.Component {
             return ev.touches.item(0)
         }
     }
+
     getTouchWithIdentifier(id, list) {
         for (let ind = 0; ind < list.length; ind++) {
             const touch = list[ind];
             if (touch.identifier === id) return touch;
         }
     }
+
     motionLoop = () => {
-        if (this.state.visible) {
+        if (this.untrackedData.visible) {
             this.position()
             requestAnimationFrame(this.motionLoop)
         }
     }
     position = () => {
-        let bound = this.state.bound
-        let pos = getCoordinates(this.element, { x: this.state.posX, y: this.state.posY, bound: bound })
+        let bound = this.props.bound
+        let left = this.untrackedData.posX - this.element.offsetWidth / 2,
+            top = this.untrackedData.posY - this.element.offsetHeight / 2;
+        let pos = getCoordinatesFromParameters({
+            height: this.element.offsetHeight,
+            width: this.element.offsetWidth,
+            x: left,
+            y: top,
+            bound: bound
+        })
         this.element.style.left = pos.x - bound.left + "px"
         this.element.style.top = pos.y - bound.top + "px"
         let r = this.state.thick / 2
@@ -130,4 +157,5 @@ class Racket extends React.Component {
         }
     }
 }
+
 export default connect(mapStoreToProp, mapDispatchToProp)(Racket)

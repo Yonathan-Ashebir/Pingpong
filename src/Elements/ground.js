@@ -5,7 +5,7 @@ import { mapDispatchToProp, mapStoreToProp, Player, untrackedGameData } from "..
 import { gameStates } from "../management/game";
 import Ball from "./ball";
 import FullScreenDialog from "./fullScreenDialog";
-import { PlayerField } from "./playerField";
+import  PlayerField  from "./playerField";
 import Suspend from "./suspendDialog";
 class Ground extends React.Component {
     constructor(params) {
@@ -16,7 +16,7 @@ class Ground extends React.Component {
     render() {
         let status = this.props.store?.status
         return (
-            <div id="ground" ref={(el) => this.element = el} onClick={() => untrackedGameData.controls.toggle()}>
+            <div id="ground" ref={(el) => this.element = el} onClick={() => untrackedGameData.controls.toggleShowAndHide()}>
                 <Player.Provider value={{}}>
                     <PlayerField position={"top"} />
                 </Player.Provider>
@@ -24,12 +24,18 @@ class Ground extends React.Component {
                     <PlayerField position={"bottom"} />
                 </Player.Provider>
                 <Ball></Ball>
-                <FullScreenDialog transitionDuration={400} show={(status === gameStates.pausing|| status === gameStates.paused)}>
+                <FullScreenDialog transitionDuration={400} show={status === gameStates.paused}>
                     <Suspend />
                 </FullScreenDialog>
             </div>)
     }
-
+    componentDidUpdate() {
+        if (!this.props.store?.groundDimensions) {
+            let dimen =this.getDimensionsDirectly() ;
+            console.log("> ground update detected unready ground dimensions")
+            if(dimen)this.props.dispatch({ type: "share", payload: { groundDimensions:dimen } });else console.log("> ground update could not fix it.")
+        }//todo: is necessary?
+    }
 
     checkBall = (ball) => {
         let rect = this.props.store.groundDimensions;
@@ -41,7 +47,7 @@ class Ground extends React.Component {
         else if (pos.y + ball.getRadius() > rect.bottom) untrackedGameData.game.updateScoreAndRestart({ red: score.red + 1, blue: score.blue })
 
     }
-    getDimensions = () => {
+    getDimensionsDirectly = () => {
         return this.element?.getBoundingClientRect()
     }
 }

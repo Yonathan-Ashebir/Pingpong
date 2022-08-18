@@ -7,20 +7,22 @@ export function BigCounter(props) {
     let step = Math.sign(props.to - props.from)
     let [count, setCount] = useState(props.from)
     let [done, setDone] = useState(false)
-    let [first,setFirst]= useState(true)
-    let countFunc = () => { if (Math.abs(props.to - count - step) < Math.abs(props.to - count)) setCount(count + step) }
+    let [first, setFirst] = useState(true)
+    let countFunc = () => {
+        if (Math.abs(props.to - count - step) < Math.abs(props.to - count)) setCount(count + step)
+    }
     let completeFunc = () => {
         if (props.onComplete) props.onComplete();
     }
     if (!done && count === props.to) {
         setDone(true)
-        setTimeout(completeFunc, props.messageTime+500+400)
+        setTimeout(completeFunc, props.messageTime + 500 + 400)
     }
-    if(first){setFirst(false);setTimeout(countFunc);}
+    if (first) { setFirst(false); setTimeout(countFunc); }
     return (
         <SwitchTransition mode="out-in">
-            <CSSTransition mountOnEnter={true} key={count} classNames={count !== props.to ? "explode" : "fade-in"} onEntered={countFunc} addEndListener={(node, call) => node.addEventListener("transitionend", call, false)}>
-                <span style={props.style} className={`big-counter${props.className ? " "+props.className : ""}${count !== props.to ? " count" : ""}`} id={props.id} >
+            <CSSTransition mountOnEnter={true} key={count}  classNames={count !== props.to ? "explode" : "fade-in"} onEnter={countFunc} addEndListener={(node, call) => node.addEventListener("transitionend", call, false)}>
+                <span style={props.style} className={`big-counter${props.className ? " " + props.className : ""}${count !== props.to ? " count" : ""}`} id={props.id} >
                     {count !== props.to ? count : props.message ? props.message : ""}
                 </span>
             </CSSTransition>
@@ -34,11 +36,11 @@ BigCounter.defaultProps = {
     messageTime: 800,
 }
 export function SmallCounter(props) {
-    let [element,setElement] = useState(null);
-    let [first,setFirst]= useState(true)
-    let counter = <span style={props.style} className={`small-counter ${props.className}`} id={props.id} ref={(el) =>setElement(el)}></span>;
+    let [element, setElement] = useState(null);
+    let [first, setFirst] = useState(true)
+    let counter = <span style={props.style} className={`small-counter ${props.className}`} id={props.id} ref={(el) => setElement(el)}></span>;
     useEffect(() => {
-        if (element&&first) {
+        if (element && first) {
             setFirst(false)
             let step = Math.sign(props.to - props.from)
             let loop = Math.abs(props.to - props.from) + 1

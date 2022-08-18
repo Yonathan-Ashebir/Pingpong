@@ -22,17 +22,15 @@ class Home extends React.Component {
             gameTargetScore: getTargetScore(),
             gameTargetLead: getTargetLead()
         };
-
     }
     render() {
-        if (this.state.status === "entering game") {
-            this.props.dispatch({ type: "share", payload: { status: gameStates.launched } });
-            return <Navigate to="./game"></Navigate>
-        }
         return (
             <div style={{ backgroundImage: "linear-gradient(120deg,rgba(255,0,0,0.86),rgba(0,0,255,0.86))" }} id="home" ref={((el => { this.element = el; window.home = el }).bind(this))}>
                 <Stack spacing={3} alignItems="center" id="main">
-                    <Button variant="text" onClick={() => { this.setState({ status: "entering game" }) }}>
+                    <Button variant="text" onClick={() => {
+                        this.props.dispatch({ type: "share", payload: { status: gameStates.launched } });
+                        this.props.navigateAbsoluteTo("/game")
+                    }}>
                         <FadeCarousel random={false}>
                             <Stack spacing={3} alignItems="center" >
                                 <div id="logo">
@@ -127,12 +125,14 @@ class Home extends React.Component {
                         </Paper>
 
                     </div>
-                </Stack>
-                <Stack direction={"horizontal"} id="bottom-bar">
+                </Stack >
+                <div style={{paddingTop:"5mm",width:'100%'}}>
+                <Stack direction="row" id="bottom-bar">
                     <span id="version">version 1.0.0</span>
                     <Button id="contact" onClick={this.showContactDialog}><span className="material-icons">contact_support</span>&nbsp;Contact ME</Button>
                 </Stack>
-                <div className="collapsed">
+                </div>
+                <div style={{display:"none"}}>
                     <Dialog open={this.state.countDialogOpened}>
                         <DialogTitle style={{ fontSize: "1em", color: "grey" }}>
                             {(this.state.gameType === gameTypes.SCORE) ? "Choose your target score" : (this.state.gameType === gameTypes.LEAD_BY) ? "Decide how far ahead the winner should be" : "How long should the game be ?"}

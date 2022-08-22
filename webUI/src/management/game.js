@@ -183,6 +183,8 @@ class Game extends React.Component {
         let dimen = untrackedGameData.ground?.getDimensionsDirectly()
         if (dimen) {
             this.props.dispatch({ type: "share", payload: { groundDimensions: dimen } })
+        }else{
+            console.warn("> Could not update ground dimensions.")
         }
     }
 

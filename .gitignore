@@ -14,4 +14,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+/webUI/.idea
+/webUI/.vscode
+/webUI/node_modules
+/webUI/nbproject
+/webUI/Profile-*.json
+
+
 

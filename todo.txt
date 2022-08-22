@@ -1,0 +1,7 @@
+- Fix setState in ball's constructor -done
+- Fix Go message animation not working (deep resuming issue)-done
+- Increase racket's performance -done
+- Main activity should use shared binding -done
+- Snackbar remove action -done
+- Add layout system ui visiblity flags -done
+- Add orientation lock -done

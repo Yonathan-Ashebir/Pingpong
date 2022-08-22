@@ -185,6 +185,7 @@ class Game extends React.Component {
             this.props.dispatch({ type: "share", payload: { groundDimensions: dimen } })
         }else{
             console.warn("> Could not update ground dimensions.")
+            
         }
     }
 

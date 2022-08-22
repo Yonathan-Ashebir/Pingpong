@@ -21,7 +21,13 @@ export function BigCounter(props) {
     if (first) { setFirst(false); setTimeout(countFunc); }
     return (
         <SwitchTransition mode="out-in">
-            <CSSTransition mountOnEnter={true} key={count}  classNames={count !== props.to ? "explode" : "fade-in"} onEnter={countFunc} addEndListener={(node, call) => node.addEventListener("transitionend", call, false)}>
+            <CSSTransition mountOnEnter={true} key={count} classNames={count !== props.to ? "explode" : "fade-in"} onEnter={countFunc} addEndListener={(node, call) => node.addEventListener("transitionend", (ev) => {
+                if (count !== props.to && ev.propertyName === "opacity") {
+                    call(ev);
+                }
+                // else if (count === props.to && window.getComputedStyle(node).opacity == '1') call(ev)
+            }
+                , false)}>
                 <span style={props.style} className={`big-counter${props.className ? " " + props.className : ""}${count !== props.to ? " count" : ""}`} id={props.id} >
                     {count !== props.to ? count : props.message ? props.message : ""}
                 </span>

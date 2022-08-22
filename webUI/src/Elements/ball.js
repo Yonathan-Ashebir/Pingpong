@@ -18,13 +18,13 @@ class Ball extends React.Component {
         if (typeof data === "string" && data.length > 0) {
             data = JSON.parse(data)
             this.untrackedData = data.untrackedData;
-            this.setState(data.state, () => {
-                this.setVelocity(new Vector(data.vx, data.vy)) //restoring non state value
-                this.adjustPosition()
-                window.preferences.setString("ball_data", "")
-            });
+            this.state = data.state;
+            this.setVelocity(new Vector(data.vx, data.vy)) //restoring non state value
+            this.adjustPosition()
+            window.preferences.setString("ball_data", "")
+
             this.untrackedData.restoredStateCode = this.props.store?.restoredStateCode
-        }
+        } else this.state = { radius: DEFAULT_BALL_RADIUS }
     }
     render() {
         this.adjustPosition();
@@ -80,7 +80,7 @@ class Ball extends React.Component {
     componentDidMount() {
     }
     componentWillUnmount() {
-      if(this.props.store?.status&&this.props.store.status !== gameStates.paused)window.preferences.setString("ball_data", "");
+        if (this.props.store?.status && this.props.store.status !== gameStates.paused) window.preferences.setString("ball_data", "");
     }
     setVelocity = (velocity) => {
 
@@ -104,7 +104,8 @@ class Ball extends React.Component {
     adjustPosition = () => {
         if (this.props.store?.groundDimensions) {
             let dimen = this.props.store.groundDimensions;
-
+            if (this.element?.style) { this.element.style.top = "0"; this.element.style.left = "0"; }
+            else if (this.element) this.element.style = { top: "0", left: "0" }
             if (this.untrackedData.defaultX && this.untrackedData.defaultY) {
                 let fx = dimen.width / 2 / this.untrackedData.defaultX
                 let fy = dimen.height / 2 / this.untrackedData.defaultY

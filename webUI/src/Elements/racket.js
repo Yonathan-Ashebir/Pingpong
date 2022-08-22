@@ -104,12 +104,14 @@ class Racket extends React.Component {
 
     show = () => {
         this.untrackedData.visible = true;
-        $(this.element).addClass("visible")
+        $(this.element).css("opacity", 1)
+        this.position()
     }
 
     hide = () => {
         this.untrackedData.visible = false;
-        $(this.element).removeClass("visible")
+        $(this.element).css("opacity", 0)
+        this.position()
     }
     /* *Selects the best touch. i.e. a touch
     - the first changed touch if the event is of type start or move
@@ -146,8 +148,9 @@ class Racket extends React.Component {
             y: top,
             bound: bound
         })
-        this.element.style.left = pos.x - bound.left + "px"
-        this.element.style.top = pos.y - bound.top + "px"
+
+        this.element.style.transform = `translate(${pos.x - bound.left}px, ${pos.y - bound.top}px) scale(${this.untrackedData.visible ? "1" : "0.7"})`
+
         let r = this.state.thick / 2
         if (!this.lineSegment) {
             this.lineSegment = new LineSegment(new Point(pos.x + r, pos.y + r), new Point(pos.x + this.state.length - r, pos.y + r))

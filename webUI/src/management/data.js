@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
-import { Vector } from "y-lib/LayoutBasics";
+import { Vector } from "../utils/LayoutBasics";
 
 //global constants
 export const gameTypes = { SCORE: 0, LEAD_BY: 1, TIME_OUT: 2 }, DEFAULT_DIFFICULTY = 1,

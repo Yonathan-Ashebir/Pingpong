@@ -1,13 +1,10 @@
-import { minWidth } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { Navigate, resolvePath, Route, Routes, useLocation, useNavigate } from 'react-router';
-import { HashRouter } from "react-router-dom";
-import { Vector } from "y-lib/LayoutBasics";
+import React, {useEffect} from "react";
+import {connect} from "react-redux";
+import {Route, Routes, useNavigate} from 'react-router';
 import './App.css';
 import Home from './Elements/home';
-import { getGameType, mapDispatchToProp, mapStoreToProp, untrackedGameData } from './management/data';
-import Game, { gameStates } from './management/game';
+import {getGameType, mapDispatchToProp, mapStoreToProp} from './management/data';
+import Game, {gameStates} from './management/game';
 
 
 class App extends React.Component {

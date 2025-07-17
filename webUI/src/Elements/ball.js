@@ -1,18 +1,34 @@
 import anime from "animejs";
 import React from "react";
-import { connect } from "react-redux";
-import { } from "redux";
+import {connect} from "react-redux";
+import {} from "redux";
 import toPX from "to-px";
-import { Vector } from "y-lib/LayoutBasics";
-import { DEFAULT_BALL_RADIUS, getInitialVelocity, mapDispatchToProp, mapStoreToProp, untrackedGameData } from "../management/data";
-import { gameStates } from "../management/game";
+import {Vector} from "../utils/LayoutBasics";
+import {
+    DEFAULT_BALL_RADIUS,
+    getInitialVelocity,
+    mapDispatchToProp,
+    mapStoreToProp,
+    untrackedGameData
+} from "../management/data";
+import {gameStates} from "../management/game";
+
 //Kept as simple as possible for render issues
 class Ball extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { radius: DEFAULT_BALL_RADIUS }
+        this.state = {radius: DEFAULT_BALL_RADIUS}
         this.velocity = new Vector();
-        this.untrackedData = { roundCount: -1, restoredStateCode: -1, shouldMove: false, posX: 0, posY: 0, defaultX: 0, defaultY: 0, lastTimePositioned: -1 };
+        this.untrackedData = {
+            roundCount: -1,
+            restoredStateCode: -1,
+            shouldMove: false,
+            posX: 0,
+            posY: 0,
+            defaultX: 0,
+            defaultY: 0,
+            lastTimePositioned: -1
+        };
         untrackedGameData.ball = this;
         let data = window.preferences.getString("ball_data")
         if (typeof data === "string" && data.length > 0) {
@@ -24,19 +40,22 @@ class Ball extends React.Component {
             window.preferences.setString("ball_data", "")
 
             this.untrackedData.restoredStateCode = this.props.store?.restoredStateCode
-        } else this.state = { radius: DEFAULT_BALL_RADIUS }
+        } else this.state = {radius: DEFAULT_BALL_RADIUS}
     }
+
     render() {
         this.adjustPosition();
         let radiusMM = this.state.radius / toPX('mm')
-        let style = { height: radiusMM * 2 + "mm", width: radiusMM * 2 + "mm" }
+        let style = {height: radiusMM * 2 + "mm", width: radiusMM * 2 + "mm"}
         return (
-            <div id="ball" ref={(element) => { this.element = element }} style={style}>
+            <div id="ball" ref={(element) => {
+                this.element = element
+            }} style={style}>
             </div>
         )
     }
-    componentDidUpdate() {
 
+    componentDidUpdate() {
         if (this.untrackedData.state !== this.props.store?.status || this.untrackedData.roundCount !== this.props.store?.roundCount) {
             switch (this.props.store?.status) {
                 case gameStates.roundStarted: {
@@ -54,7 +73,8 @@ class Ball extends React.Component {
                         this.show();
                     }
                     break
-                } case gameStates.paused: {
+                }
+                case gameStates.paused: {
                     this.stop();
                     let data = {}
                     data.state = this.state; //saving ball state
@@ -77,11 +97,14 @@ class Ball extends React.Component {
         this.untrackedData.state = this.props.store?.status;
         this.untrackedData.roundCount = this.props.store?.roundCount;
     }
+
     componentDidMount() {
     }
+
     componentWillUnmount() {
         if (this.props.store?.status && this.props.store.status !== gameStates.paused) window.preferences.setString("ball_data", "");
     }
+
     setVelocity = (velocity) => {
 
         this.velocity = velocity;
@@ -95,17 +118,20 @@ class Ball extends React.Component {
         this.position();
     }
     resetPosition = () => {
-        let { groundDimensions } = this.props.store
+        let {groundDimensions} = this.props.store
         this.setCenter(groundDimensions.width / 2, groundDimensions.height / 2);
-        this.untrackedData.defaultX = this.untrackedData.posX; this.untrackedData.defaultY = this.untrackedData.posY;
+        this.untrackedData.defaultX = this.untrackedData.posX;
+        this.untrackedData.defaultY = this.untrackedData.posY;
         this.setCenter(this.untrackedData.defaultX, this.untrackedData.defaultY);
 
     }
     adjustPosition = () => {
         if (this.props.store?.groundDimensions) {
             let dimen = this.props.store.groundDimensions;
-            if (this.element?.style) { this.element.style.top = "0"; this.element.style.left = "0"; }
-            else if (this.element) this.element.style = { top: "0", left: "0" }
+            if (this.element?.style) {
+                this.element.style.top = "0";
+                this.element.style.left = "0";
+            } else if (this.element) this.element.style = {top: "0", left: "0"}
             if (this.untrackedData.defaultX && this.untrackedData.defaultY) {
                 let fx = dimen.width / 2 / this.untrackedData.defaultX
                 let fy = dimen.height / 2 / this.untrackedData.defaultY
@@ -121,10 +147,10 @@ class Ball extends React.Component {
         }
     }
     getCenter = () => {
-        return { x: this.untrackedData.posX, y: this.untrackedData.posY }
+        return {x: this.untrackedData.posX, y: this.untrackedData.posY}
     }
     setRadius = (r) => {
-        this.setState({ radius: r })
+        this.setState({radius: r})
     }
     getRadius = () => {
         return this.state.radius
@@ -151,11 +177,20 @@ class Ball extends React.Component {
         if (this.element) this.element.style.transform = "translate(" + (this.untrackedData.posX - this.getRadius()) + "px, " + (this.untrackedData.posY - this.getRadius()) + "px)"
     }
     hide = (onComplete) => {
-        anime({ targets: this.element, scale: { duration: 300, value: 0.3, easing: "easeOutQuad" }, opacity: { duration: 200, delay: 100, value: 0 } }).complete = onComplete;
+        anime({
+            targets: this.element,
+            scale: {duration: 300, value: 0.3, easing: "easeOutQuad"},
+            opacity: {duration: 200, delay: 100, value: 0}
+        }).complete = onComplete;
     }
     show = (onComplete) => {
-        anime({ targets: this.element, scale: { duration: 300, value: 1, easing: "easeOutQuad", delay: 100 }, opacity: { duration: 200, value: 1 } }).complete = onComplete;
+        anime({
+            targets: this.element,
+            scale: {duration: 300, value: 1, easing: "easeOutQuad", delay: 100},
+            opacity: {duration: 200, value: 1}
+        }).complete = onComplete;
     }
 
 }
+
 export default connect(mapStoreToProp, mapDispatchToProp)(Ball);

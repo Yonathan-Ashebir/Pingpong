@@ -2,8 +2,8 @@ import $ from "jquery";
 import React from "react";
 import { connect } from "react-redux";
 import toPX from "to-px";
-import { LineSegment, Point } from "y-lib/LayoutBasics";
-import { getCoordinatesFromParameters } from "y-lib/src/js/layout";
+import { LineSegment, Point } from "../utils/LayoutBasics";
+import { getCoordinatesFromParameters } from "../utils/LayoutBasics";
 import {
     DEFAULT_RACKET_LENGTH,
     DEFAULT_RACKET_THICKNESS,
@@ -50,6 +50,7 @@ class Racket extends React.Component {
         if (!this.untrackedData.visible) return
         let pos = ball.getCenter()
         let s = this.lineSegment.to(new Point(pos.x, pos.y))
+        console.log(s)
 
         if (ball.getRadius() + this.state.thick / 2 >= s.getR() - 2) {
             let v = ball.getVelocity()

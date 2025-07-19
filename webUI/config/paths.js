@@ -18,10 +18,12 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const publicUrlOrPath = getPublicUrlOrPath(
   process.env.NODE_ENV === 'development',
   require(resolveApp('package.json')).homepage,
-  process.env.PUBLIC_URL
+  process.env.PUBLIC_URL || "." //todo: fix
 );
+// const publicUrlOrPath = "file:///android_asset"
+// const publicUrlOrPath = "." //todo: fix
 
-const buildPath = process.env.BUILD_PATH || "../app/src/main/assets/"//"D:/Shared/AndroidStudioProjects/pingpong/app/src/main/assets" 
+const buildPath = process.env.BUILD_PATH || "../app/src/main/assets/webui/"
 
 
 const moduleFileExtensions = [

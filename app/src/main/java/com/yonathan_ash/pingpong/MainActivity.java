@@ -13,6 +13,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             binding.webview.addJavascriptInterface(preferences, "preferences");
             binding.webview.addJavascriptInterface(this, "activity");
             binding.webview.loadUrl("javascript:enable()");
-            binding.webview.loadUrl("/android_asset/index.html");
+            binding.webview.loadUrl("file:///android_asset/webui/index.html");
         }
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //            getWindow().setLayout(MATCH_PARENT, getWindowManager().getCurrentWindowMetrics().getBounds().bottom);//todo

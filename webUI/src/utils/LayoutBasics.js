@@ -3,7 +3,7 @@
 
 
 
- // return this for methods that does not return a value
+// return this for methods that does not return a value
 export class Vector {
     x = 0
     y = 0
@@ -43,20 +43,30 @@ export class Vector {
     }
 
     resetComponent(direction, multiplier) {
-        const mag = Math.abs((this.x * direction.x + this.y * direction.y) /
-                    Math.sqrt(direction.x ** 2 + direction.y ** 2))
-        const factor = multiplier * mag / Math.sqrt(direction.x ** 2 + direction.y ** 2)
-        this.x = direction.x * factor
-        this.y = direction.y * factor
+        const dirMagSq = direction.x ** 2 + direction.y ** 2
+        const dot = this.x * direction.x + this.y * direction.y
+
+        const scale = multiplier * Math.abs(dot) / dirMagSq
+
+        const parallelX = direction.x * scale
+        const parallelY = direction.y * scale
+
+        const perpX = this.x - (dot / dirMagSq) * direction.x
+        const perpY = this.y - (dot / dirMagSq) * direction.y
+
+        this.x = parallelX + perpX
+        this.y = parallelY + perpY
+
         return this
     }
 
-    setX(x){
-        this.x  = x
+
+    setX(x) {
+        this.x = x
         return this
     }
 
-    setY(y){
+    setY(y) {
         this.y = y
         return this
     }

@@ -50,7 +50,6 @@ class Racket extends React.Component {
         if (!this.untrackedData.visible) return
         let pos = ball.getCenter()
         let s = this.lineSegment.to(new Point(pos.x, pos.y))
-        console.log(s)
 
         if (ball.getRadius() + this.state.thick / 2 >= s.getR() - 2) {
             let v = ball.getVelocity()
